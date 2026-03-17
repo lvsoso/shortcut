@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { ToolModule } from '../types';
 
 interface ToolState {
   currentToolId: string | null;
