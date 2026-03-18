@@ -47,6 +47,12 @@ export const useTranslatorStore = create<TranslatorState>()(
             s.id === id ? { ...s, ...updates } : s
           ),
         })),
+      mergeServices: () =>
+        set((state) => {
+          const existingIds = new Set(state.services.map((s) => s.id));
+          const newServices = DEFAULT_SERVICES.filter((s) => !existingIds.has(s.id));
+          return { services: [...state.services, ...newServices] };
+        }),
 
       // 语言
       selectedLanguages: DEFAULT_LANGUAGES,
@@ -82,6 +88,16 @@ export const useTranslatorStore = create<TranslatorState>()(
         sourceLang: state.sourceLang,
         targetLang: state.targetLang,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          // 合并新增的服务
+          const existingIds = new Set(state.services.map((s) => s.id));
+          const newServices = DEFAULT_SERVICES.filter((s) => !existingIds.has(s.id));
+          if (newServices.length > 0) {
+            state.services = [...state.services, ...newServices];
+          }
+        }
+      },
     }
   )
 );
