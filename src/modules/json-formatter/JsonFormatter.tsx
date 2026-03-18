@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { FileJson } from 'lucide-react';
+import { FileJson, Quote } from 'lucide-react';
 import { ToolContainer } from '../../components/layout/ToolContainer';
 import { TextArea } from '../../components/common/TextArea';
 import { Button } from '../../components/common/Button';
@@ -9,6 +9,7 @@ export function JsonFormatter() {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [useSingleQuote, setUseSingleQuote] = useState(false);
 
   const formatJson = useCallback(() => {
     try {
@@ -17,15 +18,28 @@ export function JsonFormatter() {
         setError(null);
         return;
       }
-      const parsed = JSON.parse(input);
-      const formatted = JSON.stringify(parsed, null, 2);
+      // 预处理：将单引号转为双引号，Python 布尔值/None 转为 JSON 格式
+      let processedInput = input.trim();
+      if (useSingleQuote) {
+        // 处理 Python 风格：单引号转双引号，True/False/None 转 true/false/null
+        processedInput = processedInput
+          .replace(/'/g, '"')
+          .replace(/\bTrue\b/g, 'true')
+          .replace(/\bFalse\b/g, 'false')
+          .replace(/\bNone\b/g, 'null');
+      }
+      const parsed = JSON.parse(processedInput);
+      let formatted = JSON.stringify(parsed, null, 2);
+      if (useSingleQuote) {
+        formatted = formatted.replace(/"/g, "'").replace(/\btrue\b/g, 'True').replace(/\bfalse\b/g, 'False').replace(/\bnull\b/g, 'None');
+      }
       setOutput(formatted);
       setError(null);
     } catch (err) {
       setError((err as Error).message);
       setOutput('');
     }
-  }, [input]);
+  }, [input, useSingleQuote]);
 
   const compressJson = useCallback(() => {
     try {
@@ -69,7 +83,7 @@ export function JsonFormatter() {
       description="格式化、压缩、转义 JSON 数据"
     >
       <div className="space-y-4">
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 items-center">
           <Button onClick={formatJson} variant="primary">
             <FileJson className="w-4 h-4 mr-1" />
             格式化
@@ -84,6 +98,16 @@ export function JsonFormatter() {
             反转义
           </Button>
           {output && <CopyButton text={output} />}
+          <label className="flex items-center gap-2 ml-4 text-sm text-gray-600 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={useSingleQuote}
+              onChange={(e) => setUseSingleQuote(e.target.checked)}
+              className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+            />
+            <Quote className="w-4 h-4" />
+            Python 风格（单引号）
+          </label>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
