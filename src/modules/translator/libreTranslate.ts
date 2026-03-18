@@ -1,9 +1,7 @@
 import { TranslationRequest, TranslationResult, ProxyConfig } from './types';
 
-// 开发环境使用 Vite 代理，生产环境使用实际 API
-const LIBRETRANSLATE_API = import.meta.env.DEV
-  ? '/api/libretranslate'
-  : 'https://libretranslate.de';
+// 统一使用后端代理，避免 CORS 问题
+const LIBRETRANSLATE_API = '/api/libretranslate';
 
 interface LibreTranslateResponse {
   translatedText: string;

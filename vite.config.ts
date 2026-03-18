@@ -6,10 +6,9 @@ export default defineConfig({
   server: {
     port: 13030,
     proxy: {
-      '/api/libretranslate': {
-        target: 'https://libretranslate.de',
+      '/api': {
+        target: 'http://localhost:3001',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/libretranslate/, ''),
       },
     },
   },
