@@ -59,13 +59,17 @@ export function Translator() {
 
     const translationPromises = enabledServices.map(async (service) => {
       if (service.id === 'libretranslate') {
+        // 使用用户自定义 API 地址，或传 undefined 使用默认代理地址
+        const apiUrl = service.apiUrl && service.apiUrl !== 'https://libretranslate.de'
+          ? service.apiUrl
+          : undefined;
         return translateWithLibreTranslate(
           {
             text: inputText,
             sourceLang,
             targetLang,
           },
-          service.apiUrl,
+          apiUrl,
           proxy.enabled ? proxy : undefined,
           abortControllerRef.current?.signal
         );
