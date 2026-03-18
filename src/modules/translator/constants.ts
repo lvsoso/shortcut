@@ -27,11 +27,32 @@ export const DEFAULT_SERVICES: TranslationService[] = [
     apiUrl: 'https://libretranslate.de',  // 公共实例
   },
   {
+    id: 'baidu',
+    name: '百度翻译',
+    type: 'apiKey',
+    enabled: false,
+    apiUrl: 'https://fanyi-api.baidu.com/api/trans/vip/translate',
+  },
+  {
+    id: 'youdao',
+    name: '有道翻译',
+    type: 'apiKey',
+    enabled: false,
+    apiUrl: 'https://openapi.youdao.com/api',
+  },
+  {
     id: 'google',
     name: 'Google Translate',
     type: 'apiKey',
     enabled: false,
     apiUrl: 'https://translation.googleapis.com/language/translate/v2',
+  },
+  {
+    id: 'microsoft',
+    name: '微软翻译',
+    type: 'apiKey',
+    enabled: false,
+    apiUrl: 'https://api.cognitive.microsofttranslator.com',
   },
   {
     id: 'deepl',

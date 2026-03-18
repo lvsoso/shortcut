@@ -133,10 +133,61 @@ app.use('/api/deepl', createProxyMiddleware({
   },
 }));
 
+// 百度翻译代理
+app.use('/api/baidu', createProxyMiddleware({
+  target: 'https://fanyi-api.baidu.com',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/baidu': '/api/trans/vip/translate',
+  },
+  onProxyReq: (proxyReq, req) => {
+    console.log(`[Baidu] ${req.method} ${req.path}`);
+  },
+  onError: (err, req, res) => {
+    console.error('[Baidu] Proxy error:', err.message);
+    res.status(500).json({ error: 'Proxy error', message: err.message });
+  },
+}));
+
+// 有道翻译代理
+app.use('/api/youdao', createProxyMiddleware({
+  target: 'https://openapi.youdao.com',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/youdao': '/api',
+  },
+  onProxyReq: (proxyReq, req) => {
+    console.log(`[Youdao] ${req.method} ${req.path}`);
+  },
+  onError: (err, req, res) => {
+    console.error('[Youdao] Proxy error:', err.message);
+    res.status(500).json({ error: 'Proxy error', message: err.message });
+  },
+}));
+
+// 微软翻译代理
+app.use('/api/microsoft', createProxyMiddleware({
+  target: 'https://api.cognitive.microsofttranslator.com',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/microsoft': '',
+  },
+  onProxyReq: (proxyReq, req) => {
+    console.log(`[Microsoft] ${req.method} ${req.path}`);
+  },
+  onError: (err, req, res) => {
+    console.error('[Microsoft] Proxy error:', err.message);
+    res.status(500).json({ error: 'Proxy error', message: err.message });
+  },
+}));
+
 app.listen(PORT, () => {
   console.log(`Proxy server running on http://localhost:${PORT}`);
   console.log('Available endpoints:');
   console.log('  - /api/libretranslate/* -> LibreTranslate instances (with fallback)');
+  console.log('  - /api/baidu/* -> https://fanyi-api.baidu.com/*');
+  console.log('  - /api/youdao/* -> https://openapi.youdao.com/*');
+  console.log('  - /api/microsoft/* -> https://api.cognitive.microsofttranslator.com/*');
   console.log('  - /api/google-translate/* -> https://translation.googleapis.com/*');
   console.log('  - /api/deepl/* -> https://api-free.deepl.com/*');
 });

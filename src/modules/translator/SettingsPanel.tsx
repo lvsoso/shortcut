@@ -97,6 +97,15 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                           需 API Key
                         </span>
                       )}
+                      {service.id === 'baidu' && service.enabled && (
+                        <span className="text-xs text-gray-500">格式: appId:secretKey</span>
+                      )}
+                      {service.id === 'youdao' && service.enabled && (
+                        <span className="text-xs text-gray-500">格式: appKey:secretKey</span>
+                      )}
+                      {service.id === 'microsoft' && service.enabled && (
+                        <span className="text-xs text-gray-500">格式: key:region(可选)</span>
+                      )}
                     </div>
                   </div>
 

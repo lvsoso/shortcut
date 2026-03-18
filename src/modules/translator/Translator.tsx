@@ -7,6 +7,9 @@ import { CopyButton } from '../../components/common/CopyButton';
 import { useTranslatorStore } from './store';
 import { SettingsPanel } from './SettingsPanel';
 import { translateWithLibreTranslate } from './libreTranslate';
+import { translateWithBaidu } from './baiduTranslate';
+import { translateWithYoudao } from './youdaoTranslate';
+import { translateWithMicrosoft } from './microsoftTranslate';
 import { TranslationResult, TranslationHistory } from './types';
 import { DEBOUNCE_DELAY } from './constants';
 
@@ -58,30 +61,69 @@ export function Translator() {
     }
 
     const translationPromises = enabledServices.map(async (service) => {
-      if (service.id === 'libretranslate') {
-        // 使用用户自定义 API 地址，或传 undefined 使用默认代理地址
-        const apiUrl = service.apiUrl && service.apiUrl !== 'https://libretranslate.de'
-          ? service.apiUrl
-          : undefined;
-        return translateWithLibreTranslate(
-          {
-            text: inputText,
-            sourceLang,
-            targetLang,
-          },
-          apiUrl,
-          proxy.enabled ? proxy : undefined,
-          abortControllerRef.current?.signal
-        );
+      switch (service.id) {
+        case 'libretranslate': {
+          const apiUrl = service.apiUrl && service.apiUrl !== 'https://libretranslate.de'
+            ? service.apiUrl
+            : undefined;
+          return translateWithLibreTranslate(
+            { text: inputText, sourceLang, targetLang },
+            apiUrl,
+            proxy.enabled ? proxy : undefined,
+            abortControllerRef.current?.signal
+          );
+        }
+        case 'baidu': {
+          if (!service.apiKey) {
+            return { serviceId: 'baidu', serviceName: '百度翻译', translatedText: '', error: '请配置 AppID 和密钥', latency: 0 };
+          }
+          const [appId, secretKey] = service.apiKey.split(':');
+          if (!appId || !secretKey) {
+            return { serviceId: 'baidu', serviceName: '百度翻译', translatedText: '', error: '密钥格式错误，应为 appId:secretKey', latency: 0 };
+          }
+          return translateWithBaidu(
+            { text: inputText, sourceLang, targetLang },
+            appId,
+            secretKey,
+            abortControllerRef.current?.signal
+          );
+        }
+        case 'youdao': {
+          if (!service.apiKey) {
+            return { serviceId: 'youdao', serviceName: '有道翻译', translatedText: '', error: '请配置 AppKey 和密钥', latency: 0 };
+          }
+          const [appKey, secretKey] = service.apiKey.split(':');
+          if (!appKey || !secretKey) {
+            return { serviceId: 'youdao', serviceName: '有道翻译', translatedText: '', error: '密钥格式错误，应为 appKey:secretKey', latency: 0 };
+          }
+          return translateWithYoudao(
+            { text: inputText, sourceLang, targetLang },
+            appKey,
+            secretKey,
+            abortControllerRef.current?.signal
+          );
+        }
+        case 'microsoft': {
+          if (!service.apiKey) {
+            return { serviceId: 'microsoft', serviceName: '微软翻译', translatedText: '', error: '请配置订阅密钥', latency: 0 };
+          }
+          const [key, region] = service.apiKey.split(':');
+          return translateWithMicrosoft(
+            { text: inputText, sourceLang, targetLang },
+            key,
+            region || 'global',
+            abortControllerRef.current?.signal
+          );
+        }
+        default:
+          return {
+            serviceId: service.id,
+            serviceName: service.name,
+            translatedText: '',
+            error: '暂不支持此服务',
+            latency: 0,
+          };
       }
-      // TODO: 实现 Google 和 DeepL 翻译
-      return {
-        serviceId: service.id,
-        serviceName: service.name,
-        translatedText: '',
-        error: '暂不支持此服务',
-        latency: 0,
-      };
     });
 
     const translationResults = await Promise.all(translationPromises);
