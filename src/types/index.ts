@@ -1,6 +1,6 @@
 import { ComponentType } from 'react';
 
-export type ToolCategory = 'formatter' | 'viewer' | 'converter' | 'network';
+export type ToolCategory = 'formatter' | 'viewer' | 'converter' | 'network' | 'translator';
 
 export interface ToolMeta {
   id: string;

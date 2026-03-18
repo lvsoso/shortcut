@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, FileJson, GitGraph, ArrowLeftRight, Globe, ChevronDown } from 'lucide-react';
+import { Search, FileJson, GitGraph, ArrowLeftRight, Globe, ChevronDown, Languages } from 'lucide-react';
 import { useToolStore } from '../../stores/toolStore';
 import { registry } from '../../core/registry';
 import { ToolCategory } from '../../types';
@@ -9,6 +9,7 @@ const categoryIcons: Record<ToolCategory, typeof FileJson> = {
   viewer: GitGraph,
   converter: ArrowLeftRight,
   network: Globe,
+  translator: Languages,
 };
 
 const categoryNames: Record<ToolCategory, string> = {
@@ -16,12 +17,13 @@ const categoryNames: Record<ToolCategory, string> = {
   viewer: '查看器',
   converter: '转换工具',
   network: '网络工具',
+  translator: '翻译工具',
 };
 
 export function Sidebar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedCategories, setExpandedCategories] = useState<Set<ToolCategory>>(
-    new Set(['formatter', 'viewer', 'converter', 'network'])
+    new Set(['formatter', 'viewer', 'converter', 'network', 'translator'])
   );
   const { currentToolId, setCurrentTool } = useToolStore();
 
