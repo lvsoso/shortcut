@@ -5,6 +5,7 @@ import { jsonFormatter } from './modules/json-formatter';
 import { mermaidViewer } from './modules/mermaid-viewer';
 import { dataConverter } from './modules/data-converter';
 import { networkTools } from './modules/network-tools';
+import { translator } from './modules/translator';
 import { timestampConverter } from './modules/timestamp-converter';
 import { useToolStore } from './stores/toolStore';
 
@@ -13,6 +14,7 @@ function registerTools() {
   registry.register(mermaidViewer);
   registry.register(dataConverter);
   registry.register(networkTools);
+  registry.register(translator);
   registry.register(timestampConverter);
 }
 
