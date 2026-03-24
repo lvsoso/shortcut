@@ -5,9 +5,10 @@ import { useClipboard } from '../../hooks/useClipboard';
 interface CopyButtonProps {
   text: string;
   size?: 'sm' | 'md';
+  disabled?: boolean;
 }
 
-export function CopyButton({ text, size = 'sm' }: CopyButtonProps) {
+export function CopyButton({ text, size = 'sm', disabled = false }: CopyButtonProps) {
   const { copy, copied } = useClipboard();
 
   return (
@@ -15,6 +16,7 @@ export function CopyButton({ text, size = 'sm' }: CopyButtonProps) {
       variant="secondary"
       size={size}
       onClick={() => copy(text)}
+      disabled={disabled}
       className="gap-1"
     >
       {copied ? (
