@@ -138,6 +138,7 @@ export function DataConverter() {
     <ToolContainer
       title="数据转换"
       description="Base64、URL 编码、时间戳、哈希转换"
+      layout="narrow"
     >
       <div className="space-y-4">
         <div className="flex flex-wrap gap-2">

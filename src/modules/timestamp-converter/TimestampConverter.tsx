@@ -124,6 +124,7 @@ export function TimestampConverter() {
     <ToolContainer
       title="时间戳转换"
       description="Unix 时间戳与北京时间相互转换"
+      layout="narrow"
     >
       <div className="space-y-6">
         {/* 当前时间显示 */}

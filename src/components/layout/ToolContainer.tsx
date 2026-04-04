@@ -1,12 +1,22 @@
 import { ReactNode } from 'react';
 
+type ToolContainerLayout = 'full' | 'narrow';
+
 interface ToolContainerProps {
   title: string;
   description?: string;
   children: ReactNode;
+  layout?: ToolContainerLayout;
 }
 
-export function ToolContainer({ title, description, children }: ToolContainerProps) {
+export function ToolContainer({
+  title,
+  description,
+  children,
+  layout = 'full',
+}: ToolContainerProps) {
+  const contentClassName = layout === 'narrow' ? 'w-full max-w-5xl mx-auto' : 'w-full';
+
   return (
     <div className="h-full flex flex-col">
       <div className="px-6 py-4 border-b border-gray-200 bg-white">
@@ -16,7 +26,7 @@ export function ToolContainer({ title, description, children }: ToolContainerPro
         )}
       </div>
       <div className="flex-1 overflow-auto p-6">
-        <div className="max-w-5xl mx-auto">
+        <div className={contentClassName}>
           {children}
         </div>
       </div>

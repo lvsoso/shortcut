@@ -119,6 +119,7 @@ export function NetworkTools() {
     <ToolContainer
       title="网络工具"
       description="JWT 解码、HTTP 请求测试"
+      layout="narrow"
     >
       <div className="flex gap-2 mb-4">
         <Button

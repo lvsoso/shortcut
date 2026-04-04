@@ -139,6 +139,7 @@ export function JsonFormatter() {
     <ToolContainer
       title="JSON 格式化"
       description="格式化、压缩、转义 JSON 数据"
+      layout="narrow"
     >
       <div className="space-y-4">
         <div className="flex flex-wrap gap-2 items-center">

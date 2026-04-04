@@ -144,6 +144,7 @@ export function Translator() {
     <ToolContainer
       title="多服务翻译"
       description="同时调用多个翻译服务对比结果"
+      layout="narrow"
     >
       <div className="space-y-4 h-full flex flex-col">
         {/* 工具栏 */}
