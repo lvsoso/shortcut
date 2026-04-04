@@ -1,18 +1,52 @@
 import { useState } from 'react';
 import { useTranslatorStore } from './store';
-import { TRANSLATION_SERVICES } from './constants';
+import {
+  LIBRETRANSLATE_INSTANCES,
+  LINGVA_INSTANCES,
+  TRANSLATION_SERVICE_KIND_LABELS,
+  TRANSLATION_SERVICES,
+} from './constants';
+import { defaultServiceConfigs } from './serviceConfig';
 import { Button } from '../../components/common/Button';
+import { TranslationServiceKind } from './types';
 
 interface SettingsPanelProps {
   onClose: () => void;
 }
 
+function getKindBadgeClass(kind: TranslationServiceKind) {
+  switch (kind) {
+    case 'free-default':
+      return 'bg-emerald-50 text-emerald-700';
+    case 'free-instance':
+      return 'bg-amber-50 text-amber-700';
+    case 'api-key':
+      return 'bg-gray-100 text-gray-700';
+    default:
+      return 'bg-gray-100 text-gray-700';
+  }
+}
+
+function getInstancePlaceholder(serviceId: string) {
+  if (serviceId === 'lingva') {
+    return LINGVA_INSTANCES[0];
+  }
+
+  if (serviceId === 'libretranslate') {
+    return LIBRETRANSLATE_INSTANCES[0];
+  }
+
+  return 'https://example.com';
+}
+
 export function SettingsPanel({ onClose }: SettingsPanelProps) {
   const { serviceConfigs, updateServiceConfig } = useTranslatorStore();
-  const [activeTab, setActiveTab] = useState('libretranslate');
+  const [activeTab, setActiveTab] = useState(TRANSLATION_SERVICES[0]?.id || 'mymemory');
 
   const service = TRANSLATION_SERVICES.find((s) => s.id === activeTab);
-  const config = serviceConfigs[activeTab] || { enabled: false };
+  const config = serviceConfigs[activeTab]
+    || defaultServiceConfigs[activeTab]
+    || { enabled: false };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -42,7 +76,7 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
               >
                 <div className="font-medium">{s.name}</div>
                 <div className="text-xs text-gray-500">
-                  {s.requiresKey ? '需 API Key' : '免费'}
+                  {TRANSLATION_SERVICE_KIND_LABELS[s.kind]}
                 </div>
               </button>
             ))}
@@ -53,7 +87,14 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
             {service && (
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-medium text-gray-900">{service.name}</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-medium text-gray-900">{service.name}</h3>
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${getKindBadgeClass(service.kind)}`}
+                    >
+                      {TRANSLATION_SERVICE_KIND_LABELS[service.kind]}
+                    </span>
+                  </div>
                   <p className="text-sm text-gray-500 mt-1">
                     {service.description}
                   </p>
@@ -73,6 +114,26 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
                     启用此服务
                   </label>
                 </div>
+
+                {service.kind === 'free-instance' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      实例地址
+                    </label>
+                    <input
+                      type="url"
+                      value={config.instanceUrl || ''}
+                      onChange={(e) =>
+                        updateServiceConfig(service.id, { instanceUrl: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border rounded-md text-sm"
+                      placeholder={getInstancePlaceholder(service.id)}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      留空时使用内置实例，建议填你自己的可用实例地址。
+                    </p>
+                  </div>
+                )}
 
                 {service.requiresKey && (
                   <div className="space-y-3">

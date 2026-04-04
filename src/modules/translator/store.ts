@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { ServiceConfigs } from './types';
+import { defaultServiceConfigs, mergeServiceConfigs } from './serviceConfig';
 
 interface TranslatorState {
   // 服务配置
@@ -17,22 +18,20 @@ interface TranslatorState {
   clearHistory: () => void;
 }
 
-const defaultConfigs: ServiceConfigs = {
-  libretranslate: { enabled: true },
-  baidu: { enabled: false },
-  youdao: { enabled: false },
-  microsoft: { enabled: false },
-};
-
 export const useTranslatorStore = create<TranslatorState>()(
   persist(
     (set) => ({
-      serviceConfigs: defaultConfigs,
+      serviceConfigs: defaultServiceConfigs,
       updateServiceConfig: (serviceId, config) =>
         set((state) => ({
           serviceConfigs: {
             ...state.serviceConfigs,
-            [serviceId]: { ...state.serviceConfigs[serviceId], ...config },
+            [serviceId]: {
+              ...(state.serviceConfigs[serviceId]
+                ?? defaultServiceConfigs[serviceId]
+                ?? { enabled: false }),
+              ...config,
+            },
           },
         })),
       autoTranslate: false,
@@ -48,6 +47,15 @@ export const useTranslatorStore = create<TranslatorState>()(
     }),
     {
       name: 'translator-storage',
+      merge: (persistedState, currentState) => {
+        const typedPersistedState = persistedState as Partial<TranslatorState> | undefined;
+
+        return {
+          ...currentState,
+          ...typedPersistedState,
+          serviceConfigs: mergeServiceConfigs(typedPersistedState?.serviceConfigs),
+        };
+      },
     }
   )
 );

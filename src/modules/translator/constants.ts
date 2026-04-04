@@ -1,12 +1,35 @@
-import { TranslationService } from './types';
+import { TranslationService, TranslationServiceKind } from './types';
+
+export const TRANSLATION_SERVICE_KIND_LABELS: Record<TranslationServiceKind, string> = {
+  'free-default': '默认免费',
+  'free-instance': '社区实例 / 可自建',
+  'api-key': '需 API Key',
+};
 
 export const TRANSLATION_SERVICES: TranslationService[] = [
   {
+    id: 'mymemory',
+    name: 'MyMemory',
+    description: '免 Key，可直接使用，匿名额度有限',
+    requiresKey: false,
+    languages: ['auto', 'zh', 'zh-Hans', 'zh-Hant', 'zh-TW', 'en', 'ja', 'ko', 'fr', 'de', 'es', 'ru', 'it', 'pt', 'ar', 'th', 'vi', 'tr'],
+    kind: 'free-default',
+  },
+  {
+    id: 'lingva',
+    name: 'Lingva',
+    description: '免 Key，依赖实例可用性，支持自定义实例',
+    requiresKey: false,
+    languages: ['auto', 'zh', 'zh-Hans', 'zh-Hant', 'zh-TW', 'en', 'ja', 'ko', 'fr', 'de', 'es', 'ru', 'it', 'pt', 'ar', 'th', 'vi', 'tr'],
+    kind: 'free-instance',
+  },
+  {
     id: 'libretranslate',
     name: 'LibreTranslate',
-    description: '免费开源翻译（部分实例可能不可用）',
+    description: '免 Key，依赖实例可用性，部分实例可能受限',
     requiresKey: false,
-    languages: ['en', 'zh', 'ja', 'ko', 'fr', 'de', 'es', 'ru', 'it', 'pt', 'ar', 'tr'],
+    languages: ['auto', 'zh', 'zh-Hans', 'zh-Hant', 'zh-TW', 'en', 'ja', 'ko', 'fr', 'de', 'es', 'ru', 'it', 'pt', 'ar', 'tr'],
+    kind: 'free-instance',
   },
   {
     id: 'baidu',
@@ -15,6 +38,7 @@ export const TRANSLATION_SERVICES: TranslationService[] = [
     requiresKey: true,
     requiresSecret: true,
     languages: ['zh', 'en', 'ja', 'ko', 'fr', 'de', 'es', 'ru', 'it', 'pt', 'ar', 'th', 'vi'],
+    kind: 'api-key',
   },
   {
     id: 'youdao',
@@ -23,6 +47,7 @@ export const TRANSLATION_SERVICES: TranslationService[] = [
     requiresKey: true,
     requiresSecret: true,
     languages: ['zh', 'en', 'ja', 'ko', 'fr', 'de', 'es', 'ru', 'it', 'pt'],
+    kind: 'api-key',
   },
   {
     id: 'microsoft',
@@ -30,7 +55,16 @@ export const TRANSLATION_SERVICES: TranslationService[] = [
     description: '需要 Azure 密钥',
     requiresKey: true,
     languages: ['zh-Hans', 'zh-Hant', 'en', 'ja', 'ko', 'fr', 'de', 'es', 'ru', 'it', 'pt', 'ar', 'th'],
+    kind: 'api-key',
   },
+];
+
+// Lingva 公共实例列表
+export const LINGVA_INSTANCES = [
+  'https://lingva.ml',
+  'https://translate.igna.wtf',
+  'https://translate.plausibility.cloud',
+  'https://translate.projectsegfau.lt',
 ];
 
 // LibreTranslate 公共实例列表

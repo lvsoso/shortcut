@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Settings, Trash2, Clock, AlertCircle, Languages } from 'lucide-react';
 import { ToolContainer } from '../../components/layout/ToolContainer';
 import { TextArea } from '../../components/common/TextArea';
@@ -6,6 +6,8 @@ import { Button } from '../../components/common/Button';
 import { useTranslatorStore } from './store';
 import { SettingsPanel } from './SettingsPanel';
 import { translateWithLibreTranslate } from './libreTranslate';
+import { translateWithLingva } from './lingvaTranslate';
+import { translateWithMyMemory } from './myMemoryTranslate';
 import { translateWithBaidu } from './baiduTranslate';
 import { translateWithYoudao } from './youdaoTranslate';
 import { translateWithMicrosoft } from './microsoftTranslate';
@@ -20,6 +22,7 @@ export function Translator() {
   const [loading, setLoading] = useState<Record<string, boolean>>({});
   const [showSettings, setShowSettings] = useState(false);
   const abortControllers = useRef<Record<string, AbortController>>({});
+  const translateTimerRef = useRef<number | null>(null);
 
   const { serviceConfigs, autoTranslate, setAutoTranslate, addToHistory } = useTranslatorStore();
 
@@ -70,10 +73,19 @@ export function Translator() {
           case 'libretranslate':
             result = await translateWithLibreTranslate(
               request,
-              undefined,
-              undefined,
+              serviceConfigs.libretranslate?.instanceUrl,
               controller.signal
             );
+            break;
+          case 'lingva':
+            result = await translateWithLingva(
+              request,
+              serviceConfigs.lingva?.instanceUrl,
+              controller.signal
+            );
+            break;
+          case 'mymemory':
+            result = await translateWithMyMemory(request, controller.signal);
             break;
           case 'baidu':
             result = await translateWithBaidu(
@@ -134,11 +146,23 @@ export function Translator() {
   };
 
   const clearAll = () => {
+    if (translateTimerRef.current) {
+      window.clearTimeout(translateTimerRef.current);
+      translateTimerRef.current = null;
+    }
     setText('');
     setResults([]);
     Object.values(abortControllers.current).forEach((controller) => controller.abort());
     abortControllers.current = {};
   };
+
+  useEffect(() => {
+    return () => {
+      if (translateTimerRef.current) {
+        window.clearTimeout(translateTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <ToolContainer
@@ -148,69 +172,71 @@ export function Translator() {
     >
       <div className="space-y-4 h-full flex flex-col">
         {/* 工具栏 */}
-        <div className="flex flex-wrap items-center gap-2">
-          <select
-            value={sourceLang}
-            onChange={(e) => setSourceLang(e.target.value)}
-            className="px-3 py-1.5 border rounded-md text-sm bg-white"
-          >
-            {LANGUAGE_OPTIONS.map((lang) => (
-              <option key={`src-${lang.code}`} value={lang.code}>
-                {lang.name}
-              </option>
-            ))}
-          </select>
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              value={sourceLang}
+              onChange={(e) => setSourceLang(e.target.value)}
+              className="px-3 py-1.5 border rounded-md text-sm bg-white"
+            >
+              {LANGUAGE_OPTIONS.map((lang) => (
+                <option key={`src-${lang.code}`} value={lang.code}>
+                  {lang.name}
+                </option>
+              ))}
+            </select>
 
-          <button
-            onClick={handleSwapLanguages}
-            disabled={sourceLang === 'auto'}
-            className="p-1.5 rounded-md hover:bg-gray-100 disabled:opacity-50"
-            title="交换语言"
-          >
-            <Languages className="w-4 h-4" />
-          </button>
+            <button
+              onClick={handleSwapLanguages}
+              disabled={sourceLang === 'auto'}
+              className="p-1.5 rounded-md hover:bg-gray-100 disabled:opacity-50"
+              title="交换语言"
+            >
+              <Languages className="w-4 h-4" />
+            </button>
 
-          <select
-            value={targetLang}
-            onChange={(e) => setTargetLang(e.target.value)}
-            className="px-3 py-1.5 border rounded-md text-sm bg-white"
-          >
-            {LANGUAGE_OPTIONS.filter((l) => l.code !== 'auto').map((lang) => (
-              <option key={`tgt-${lang.code}`} value={lang.code}>
-                {lang.name}
-              </option>
-            ))}
-          </select>
+            <select
+              value={targetLang}
+              onChange={(e) => setTargetLang(e.target.value)}
+              className="px-3 py-1.5 border rounded-md text-sm bg-white"
+            >
+              {LANGUAGE_OPTIONS.filter((l) => l.code !== 'auto').map((lang) => (
+                <option key={`tgt-${lang.code}`} value={lang.code}>
+                  {lang.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <div className="flex-1" />
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="flex items-center gap-1.5 text-sm text-gray-600">
+              <input
+                type="checkbox"
+                checked={autoTranslate}
+                onChange={(e) => setAutoTranslate(e.target.checked)}
+                className="rounded border-gray-300"
+              />
+              自动翻译
+            </label>
 
-          <label className="flex items-center gap-1.5 text-sm text-gray-600">
-            <input
-              type="checkbox"
-              checked={autoTranslate}
-              onChange={(e) => setAutoTranslate(e.target.checked)}
-              className="rounded border-gray-300"
-            />
-            自动翻译
-          </label>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setShowSettings(true)}
+            >
+              <Settings className="w-4 h-4 mr-1" />
+              设置
+            </Button>
 
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => setShowSettings(true)}
-          >
-            <Settings className="w-4 h-4 mr-1" />
-            设置
-          </Button>
+            <Button variant="secondary" size="sm" onClick={clearAll}>
+              <Trash2 className="w-4 h-4 mr-1" />
+              清空
+            </Button>
 
-          <Button variant="secondary" size="sm" onClick={clearAll}>
-            <Trash2 className="w-4 h-4 mr-1" />
-            清空
-          </Button>
-
-          <Button variant="primary" size="sm" onClick={translate} disabled={!text.trim()}>
-            翻译
-          </Button>
+            <Button variant="primary" size="sm" onClick={translate} disabled={!text.trim()}>
+              翻译
+            </Button>
+          </div>
         </div>
 
         {/* 输入区域 */}
@@ -219,13 +245,17 @@ export function Translator() {
             value={text}
             onChange={(e) => {
               setText(e.target.value);
+
+              if (translateTimerRef.current) {
+                window.clearTimeout(translateTimerRef.current);
+                translateTimerRef.current = null;
+              }
+
               if (autoTranslate && e.target.value.trim()) {
-                // 防抖翻译
-                clearTimeout((translate as unknown as { timer: number }).timer);
-                (translate as unknown as { timer: number }).timer = window.setTimeout(
-                  translate,
-                  1000
-                );
+                // 防抖翻译，避免输入过程中触发多次并发请求
+                translateTimerRef.current = window.setTimeout(() => {
+                  translate();
+                }, 1000);
               }
             }}
             placeholder="输入要翻译的文本..."
@@ -237,55 +267,55 @@ export function Translator() {
         <div className="flex-1 overflow-y-auto min-h-0">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {results.map((result) => (
-              <div
-                key={result.serviceId}
-                className="border rounded-lg p-3 bg-white"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-sm">{result.serviceName}</span>
-                    {loading[result.serviceId] && (
-                      <span className="text-xs text-blue-500">翻译中...</span>
-                    )}
-                    {result.latency && (
-                      <span className="text-xs text-gray-400 flex items-center gap-0.5">
-                        <Clock className="w-3 h-3" />
-                        {result.latency}ms
+                <div
+                  key={result.serviceId}
+                  className="border rounded-lg p-3 bg-white"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm">{result.serviceName}</span>
+                      {loading[result.serviceId] && (
+                        <span className="text-xs text-blue-500">翻译中...</span>
+                      )}
+                      {result.latency && (
+                        <span className="text-xs text-gray-400 flex items-center gap-0.5">
+                          <Clock className="w-3 h-3" />
+                          {result.latency}ms
+                        </span>
+                      )}
+                    </div>
+                    {result.detectedLang && (
+                      <span className="text-xs text-gray-400">
+                        检测: {result.detectedLang}
                       </span>
                     )}
                   </div>
-                  {result.detectedLang && (
-                    <span className="text-xs text-gray-400">
-                      检测: {result.detectedLang}
-                    </span>
+
+                  {result.error ? (
+                    <div className="text-sm text-red-600 bg-red-50 p-2 rounded flex items-start gap-1.5">
+                      <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                      <span>{result.error}</span>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-800 bg-gray-50 p-2 rounded min-h-[3rem]">
+                      {result.translatedText || (
+                        <span className="text-gray-400 italic">等待翻译...</span>
+                      )}
+                    </div>
+                  )}
+
+                  {result.translatedText && (
+                    <div className="flex justify-end mt-2">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => navigator.clipboard.writeText(result.translatedText)}
+                      >
+                        复制
+                      </Button>
+                    </div>
                   )}
                 </div>
-
-                {result.error ? (
-                  <div className="text-sm text-red-600 bg-red-50 p-2 rounded flex items-start gap-1.5">
-                    <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                    <span>{result.error}</span>
-                  </div>
-                ) : (
-                  <div className="text-sm text-gray-800 bg-gray-50 p-2 rounded min-h-[3rem]">
-                    {result.translatedText || (
-                      <span className="text-gray-400 italic">等待翻译...</span>
-                    )}
-                  </div>
-                )}
-
-                {result.translatedText && (
-                  <div className="flex justify-end mt-2">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => navigator.clipboard.writeText(result.translatedText)}
-                    >
-                      复制
-                    </Button>
-                  </div>
-                )}
-              </div>
             ))}
           </div>
 

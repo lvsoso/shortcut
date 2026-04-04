@@ -11,6 +11,8 @@ interface YoudaoTranslateResponse {
 const YOUDAO_LANG_MAP: Record<string, string> = {
   'auto': 'auto',
   'zh': 'zh-CHS',
+  'zh-Hans': 'zh-CHS',
+  'zh-Hant': 'zh-CHT',
   'zh-TW': 'zh-CHT',
   'en': 'en',
   'ja': 'ja',
@@ -33,6 +35,18 @@ export async function translateWithYoudao(
   abortSignal?: AbortSignal
 ): Promise<TranslationResult> {
   const startTime = Date.now();
+  const sourceLang = YOUDAO_LANG_MAP[request.sourceLang];
+  const targetLang = YOUDAO_LANG_MAP[request.targetLang];
+
+  if (!sourceLang || !targetLang) {
+    return {
+      serviceId: 'youdao',
+      serviceName: '有道翻译',
+      translatedText: '',
+      error: '有道翻译暂不支持当前语言组合',
+      latency: Date.now() - startTime,
+    };
+  }
 
   try {
     // 生成随机盐值
@@ -44,8 +58,8 @@ export async function translateWithYoudao(
 
     const params = new URLSearchParams({
       q: request.text,
-      from: YOUDAO_LANG_MAP[request.sourceLang] || 'auto',
-      to: YOUDAO_LANG_MAP[request.targetLang] || 'en',
+      from: sourceLang,
+      to: targetLang,
       appKey: appId,
       salt: salt,
       sign: sign,

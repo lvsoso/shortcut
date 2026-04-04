@@ -15,6 +15,8 @@ interface BaiduTranslateResponse {
 const BAIDU_LANG_MAP: Record<string, string> = {
   'auto': 'auto',
   'zh': 'zh',
+  'zh-Hans': 'zh',
+  'zh-Hant': 'cht',
   'zh-TW': 'cht',
   'en': 'en',
   'ja': 'jp',
@@ -37,6 +39,18 @@ export async function translateWithBaidu(
   abortSignal?: AbortSignal
 ): Promise<TranslationResult> {
   const startTime = Date.now();
+  const sourceLang = BAIDU_LANG_MAP[request.sourceLang];
+  const targetLang = BAIDU_LANG_MAP[request.targetLang];
+
+  if (!sourceLang || !targetLang) {
+    return {
+      serviceId: 'baidu',
+      serviceName: '百度翻译',
+      translatedText: '',
+      error: '百度翻译暂不支持当前语言组合',
+      latency: Date.now() - startTime,
+    };
+  }
 
   try {
     // 生成随机盐值
@@ -47,8 +61,8 @@ export async function translateWithBaidu(
 
     const params = new URLSearchParams({
       q: request.text,
-      from: BAIDU_LANG_MAP[request.sourceLang] || 'auto',
-      to: BAIDU_LANG_MAP[request.targetLang] || 'en',
+      from: sourceLang,
+      to: targetLang,
       appid: appId,
       salt: salt,
       sign: sign,

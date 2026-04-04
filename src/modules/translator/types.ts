@@ -13,6 +13,8 @@ export interface TranslationResult {
   latency?: number;
 }
 
+export type TranslationServiceKind = 'free-default' | 'free-instance' | 'api-key';
+
 export interface TranslationService {
   id: string;
   name: string;
@@ -20,17 +22,14 @@ export interface TranslationService {
   requiresKey: boolean;
   requiresSecret?: boolean;
   languages: string[];
-}
-
-export interface ProxyConfig {
-  enabled: boolean;
-  url: string;
+  kind: TranslationServiceKind;
 }
 
 export type ServiceConfig = {
   apiKey?: string;
   secretKey?: string;
   enabled: boolean;
+  instanceUrl?: string;
 };
 
 export type ServiceConfigs = Record<string, ServiceConfig>;
