@@ -15,7 +15,9 @@ export function ToolContainer({
   children,
   layout = 'full',
 }: ToolContainerProps) {
-  const contentClassName = layout === 'narrow' ? 'w-full max-w-5xl mx-auto' : 'w-full';
+  const contentClassName = layout === 'narrow'
+    ? 'mx-auto w-full max-w-5xl'
+    : 'h-full min-h-0 w-full';
 
   return (
     <div className="h-full flex flex-col">

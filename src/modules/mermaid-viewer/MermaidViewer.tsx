@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import mermaid from 'mermaid';
 import {
   AlertCircle,
@@ -51,6 +51,11 @@ const examples = [
     Animal <|-- Dog`,
   },
 ];
+
+const DEFAULT_EDITOR_WIDTH = 360;
+const MIN_EDITOR_WIDTH = 320;
+const MIN_PREVIEW_WIDTH = 320;
+const RESIZE_HANDLE_WIDTH = 12;
 
 interface MermaidEditorContentProps {
   code: string;
@@ -121,6 +126,8 @@ export function MermaidViewer() {
   const [lastSuccessfulSvg, setLastSuccessfulSvg] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [editorWidth, setEditorWidth] = useState(DEFAULT_EDITOR_WIDTH);
+  const [isResizing, setIsResizing] = useState(false);
 
   const [scale, setScale] = useState(1);
   const [translateX, setTranslateX] = useState(0);
@@ -128,6 +135,7 @@ export function MermaidViewer() {
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
   const [isPanMode, setIsPanMode] = useState(false);
+  const splitContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     mermaid.initialize({
@@ -149,6 +157,37 @@ export function MermaidViewer() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isEditorOpen]);
+
+  const clampEditorWidth = useCallback((nextWidth: number) => {
+    const containerWidth = splitContainerRef.current?.getBoundingClientRect().width;
+    if (!containerWidth) {
+      return Math.max(MIN_EDITOR_WIDTH, nextWidth);
+    }
+
+    const maxEditorWidth = Math.max(
+      MIN_EDITOR_WIDTH,
+      containerWidth - MIN_PREVIEW_WIDTH - RESIZE_HANDLE_WIDTH,
+    );
+
+    return Math.max(MIN_EDITOR_WIDTH, Math.min(nextWidth, maxEditorWidth));
+  }, []);
+
+  useEffect(() => {
+    if (!isEditorOpen) {
+      setIsResizing(false);
+      return;
+    }
+
+    // 容器尺寸变化后重新钳制编辑区宽度，避免预览区被过度挤压。
+    const syncEditorWidth = () => {
+      setEditorWidth((currentWidth) => clampEditorWidth(currentWidth));
+    };
+
+    syncEditorWidth();
+    window.addEventListener('resize', syncEditorWidth);
+
+    return () => window.removeEventListener('resize', syncEditorWidth);
+  }, [isEditorOpen, clampEditorWidth]);
 
   const renderDiagram = useCallback(async () => {
     if (!code.trim()) {
@@ -174,6 +213,40 @@ export function MermaidViewer() {
     const timer = setTimeout(renderDiagram, 300);
     return () => clearTimeout(timer);
   }, [renderDiagram]);
+
+  const handleResizeMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsResizing(true);
+  };
+
+  const handleResizeMouseMove = useCallback((event: MouseEvent) => {
+    if (!isResizing || !splitContainerRef.current) return;
+
+    const { left } = splitContainerRef.current.getBoundingClientRect();
+    const nextWidth = event.clientX - left;
+    setEditorWidth(clampEditorWidth(nextWidth));
+  }, [isResizing, clampEditorWidth]);
+
+  const handleResizeMouseUp = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  useEffect(() => {
+    if (!isResizing) return;
+
+    document.addEventListener('mousemove', handleResizeMouseMove);
+    document.addEventListener('mouseup', handleResizeMouseUp);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+
+    return () => {
+      document.removeEventListener('mousemove', handleResizeMouseMove);
+      document.removeEventListener('mouseup', handleResizeMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [isResizing, handleResizeMouseMove, handleResizeMouseUp]);
 
   const handleCanvasMouseDown = (event: React.MouseEvent) => {
     if (!isPanMode) return;
@@ -246,7 +319,7 @@ export function MermaidViewer() {
       title="Mermaid 查看器"
       description="实时预览 Mermaid 图表"
     >
-      <div className="flex min-h-[36rem] flex-col gap-4 lg:min-h-[42rem]">
+      <div className="flex h-full min-h-0 flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
           <div className="flex flex-wrap items-center gap-2">
             <Button
@@ -306,18 +379,48 @@ export function MermaidViewer() {
           </div>
         )}
 
-        <div className="relative flex min-h-[32rem] flex-1 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm lg:min-h-[40rem]">
+        <div
+          ref={splitContainerRef}
+          className="relative flex min-h-[32rem] flex-1 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm"
+        >
           <div
-            className={`hidden h-full shrink-0 overflow-hidden bg-white transition-all duration-300 ease-out lg:flex ${
-              isEditorOpen ? 'w-[360px] border-r border-slate-200' : 'w-0 border-r-0'
+            className={`hidden h-full shrink-0 overflow-hidden bg-white transition-[width,border-color] ease-out lg:flex ${
+              isResizing ? 'duration-0' : 'duration-300'
+            } ${isEditorOpen ? 'border-r border-slate-200' : 'border-r-0'
             }`}
+            style={{ width: isEditorOpen ? `${editorWidth}px` : '0px' }}
           >
-            <div className="h-full w-[360px]">
+            <div className="h-full min-w-0 flex-1">
               <MermaidEditorContent
                 code={code}
                 onChange={setCode}
                 onSelectExample={setCode}
                 onClose={() => setIsEditorOpen(false)}
+              />
+            </div>
+          </div>
+
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            aria-hidden={!isEditorOpen}
+            title="拖拽调整编辑区宽度"
+            className={`hidden shrink-0 items-stretch transition-[width,opacity] ease-out lg:flex ${
+              isResizing ? 'duration-0' : 'duration-300'
+            } ${
+              isEditorOpen ? 'w-3 opacity-100' : 'pointer-events-none w-0 opacity-0'
+            }`}
+            onMouseDown={handleResizeMouseDown}
+          >
+            <div
+              className={`flex w-full cursor-col-resize items-center justify-center ${
+                isResizing ? 'bg-slate-100/90' : 'hover:bg-slate-100/80'
+              }`}
+            >
+              <div
+                className={`h-16 w-px rounded-full transition-colors ${
+                  isResizing ? 'bg-slate-500' : 'bg-slate-300'
+                }`}
               />
             </div>
           </div>
