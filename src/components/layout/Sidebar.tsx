@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { RefObject, useState } from 'react';
 import { Search, FileJson, GitGraph, ArrowLeftRight, Globe, ChevronDown, Languages, Clock } from 'lucide-react';
 import { useToolStore } from '../../stores/toolStore';
 import { registry } from '../../core/registry';
@@ -22,7 +22,15 @@ const categoryNames: Record<ToolCategory, string> = {
   time: '时间工具',
 };
 
-export function Sidebar() {
+interface SidebarProps {
+  searchInputRef: RefObject<HTMLInputElement>;
+  onOpenShortcutHelp: () => void;
+}
+
+export function Sidebar({
+  searchInputRef,
+  onOpenShortcutHelp,
+}: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedCategories, setExpandedCategories] = useState<Set<ToolCategory>>(
     new Set(['formatter', 'viewer', 'converter', 'network', 'translator', 'time'])
@@ -53,12 +61,20 @@ export function Sidebar() {
     <aside className="w-60 bg-gray-900 text-gray-300 flex flex-col h-full">
       <div className="p-4 border-b border-gray-800">
         <h1 className="text-lg font-semibold text-white">DevTools</h1>
+        <button
+          type="button"
+          onClick={onOpenShortcutHelp}
+          className="mt-2 text-xs text-gray-400 transition-colors hover:text-gray-200"
+        >
+          ? 查看快捷键
+        </button>
       </div>
 
       <div className="p-3">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input
+            ref={searchInputRef}
             type="text"
             placeholder="搜索工具..."
             value={searchQuery}
