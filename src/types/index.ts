@@ -1,4 +1,4 @@
-import { ComponentType } from 'react';
+import { ComponentType, LazyExoticComponent } from 'react';
 
 export type ToolCategory = 'formatter' | 'viewer' | 'converter' | 'network' | 'translator' | 'time';
 
@@ -12,9 +12,11 @@ export interface ToolMeta {
   order?: number;
 }
 
+export type ToolComponent = ComponentType<any> | LazyExoticComponent<ComponentType<any>>;
+
 export interface ToolModule {
   meta: ToolMeta;
-  component: ComponentType;
+  component: ToolComponent;
 }
 
 export interface NavItem {

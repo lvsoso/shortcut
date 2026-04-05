@@ -1,5 +1,10 @@
+import { lazy } from 'react';
 import { ToolModule } from '../../types';
-import { TimestampConverter } from './TimestampConverter';
+
+const TimestampConverter = lazy(async () => {
+  const module = await import('./TimestampConverter');
+  return { default: module.TimestampConverter };
+});
 
 export const timestampConverter: ToolModule = {
   meta: {

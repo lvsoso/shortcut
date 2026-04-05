@@ -1,5 +1,10 @@
+import { lazy } from 'react';
 import { ToolModule } from '../../types';
-import { MermaidViewer } from './MermaidViewer';
+
+const MermaidViewer = lazy(async () => {
+  const module = await import('./MermaidViewer');
+  return { default: module.MermaidViewer };
+});
 
 export const mermaidViewer: ToolModule = {
   meta: {

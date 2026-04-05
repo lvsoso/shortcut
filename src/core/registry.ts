@@ -4,10 +4,16 @@ class ToolRegistry {
   private tools: Map<string, ToolModule> = new Map();
 
   register(tool: ToolModule): void {
-    if (this.tools.has(tool.meta.id)) {
-      console.warn(`Tool ${tool.meta.id} already registered`);
+    const existingTool = this.tools.get(tool.meta.id);
+    if (existingTool === tool) {
       return;
     }
+
+    if (existingTool) {
+      this.tools.set(tool.meta.id, tool);
+      return;
+    }
+
     this.tools.set(tool.meta.id, tool);
   }
 

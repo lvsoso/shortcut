@@ -1,5 +1,10 @@
+import { lazy } from 'react';
 import { ToolModule } from '../../types';
-import { NetworkTools } from './NetworkTools';
+
+const NetworkTools = lazy(async () => {
+  const module = await import('./NetworkTools');
+  return { default: module.NetworkTools };
+});
 
 export const networkTools: ToolModule = {
   meta: {

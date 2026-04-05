@@ -1,5 +1,10 @@
+import { lazy } from 'react';
 import { ToolModule } from '../../types';
-import { DataConverter } from './DataConverter';
+
+const DataConverter = lazy(async () => {
+  const module = await import('./DataConverter');
+  return { default: module.DataConverter };
+});
 
 export const dataConverter: ToolModule = {
   meta: {

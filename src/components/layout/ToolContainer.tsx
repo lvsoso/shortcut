@@ -20,14 +20,19 @@ export function ToolContainer({
     : 'h-full min-h-0 w-full';
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="px-6 py-4 border-b border-gray-200 bg-white">
-        <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+    <div className="flex h-full flex-col overflow-hidden rounded-[26px] border border-slate-200/80 bg-white">
+      <div className="border-b border-slate-200/70 px-6 py-5 sm:px-7">
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
+          {layout === 'narrow' ? 'Focused Workspace' : 'Wide Workspace'}
+        </p>
+        <h2 className="mt-2 text-xl font-semibold tracking-tight text-slate-950 sm:text-[1.65rem]">
+          {title}
+        </h2>
         {description && (
-          <p className="mt-1 text-sm text-gray-600">{description}</p>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{description}</p>
         )}
       </div>
-      <div className="flex-1 overflow-auto p-6">
+      <div className="min-h-0 flex-1 overflow-auto px-4 pb-4 pt-4 sm:px-5 sm:pb-5 sm:pt-5">
         <div className={contentClassName}>
           {children}
         </div>

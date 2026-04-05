@@ -1,5 +1,10 @@
+import { lazy } from 'react';
 import { ToolModule } from '../../types';
-import { Translator } from './Translator';
+
+const Translator = lazy(async () => {
+  const module = await import('./Translator');
+  return { default: module.Translator };
+});
 
 export const translator: ToolModule = {
   meta: {
@@ -13,7 +18,5 @@ export const translator: ToolModule = {
   },
   component: Translator,
 };
-
-export { Translator };
 export * from './types';
 export * from './constants';

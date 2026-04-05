@@ -1,5 +1,10 @@
+import { lazy } from 'react';
 import { ToolModule } from '../../types';
-import { JsonFormatter } from './JsonFormatter';
+
+const JsonFormatter = lazy(async () => {
+  const module = await import('./JsonFormatter');
+  return { default: module.JsonFormatter };
+});
 
 export const jsonFormatter: ToolModule = {
   meta: {
