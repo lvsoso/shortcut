@@ -50,3 +50,6 @@ coverage
 # Optional: Local development
 *.local
 .worktrees/
+.claude/worktrees/
+.superpowers/
+tests/
