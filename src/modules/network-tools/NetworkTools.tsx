@@ -121,7 +121,7 @@ export function NetworkTools() {
       description="JWT 解码、HTTP 请求测试"
       layout="narrow"
     >
-      <div className="flex gap-2 mb-4">
+      <div className="mb-4 flex gap-2">
         <Button
           variant={activeTool === 'jwt' ? 'primary' : 'secondary'}
           size="sm"
@@ -141,7 +141,7 @@ export function NetworkTools() {
       {activeTool === 'jwt' ? (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="mb-1 block text-sm font-medium text-fg-secondary">
               JWT Token
             </label>
             <div className="flex gap-2">
@@ -150,48 +150,48 @@ export function NetworkTools() {
                 value={jwtInput}
                 onChange={(e) => setJwtInput(e.target.value)}
                 placeholder="eyJhbGciOiJIUzI1NiIs..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 font-mono text-sm"
+                className="flex-1 rounded-md border border-border bg-input px-3 py-2 font-mono text-sm text-fg focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
               />
               <Button onClick={decodeJwtToken}>解码</Button>
             </div>
           </div>
 
           {jwtError && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-red-600 text-sm">{jwtError}</p>
+            <div className="rounded-md border border-state-danger/25 bg-state-danger/10 p-3">
+              <p className="text-sm text-state-danger">{jwtError}</p>
             </div>
           )}
 
           {jwtDecoded && (
             <div className="space-y-4">
-              <div className="p-4 bg-gray-50 rounded-md">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-gray-700">Header</h4>
+              <div className="rounded-md border border-border bg-panel p-4">
+                <div className="mb-2 flex items-center justify-between">
+                  <h4 className="font-medium text-fg-secondary">Header</h4>
                   <CopyButton text={JSON.stringify(jwtDecoded.header, null, 2)} size="sm" />
                 </div>
-                <pre className="text-sm font-mono text-gray-600 overflow-x-auto">
+                <pre className="overflow-x-auto text-sm font-mono text-fg-secondary">
                   {JSON.stringify(jwtDecoded.header, null, 2)}
                 </pre>
               </div>
 
-              <div className="p-4 bg-gray-50 rounded-md">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-gray-700">Payload</h4>
+              <div className="rounded-md border border-border bg-panel p-4">
+                <div className="mb-2 flex items-center justify-between">
+                  <h4 className="font-medium text-fg-secondary">Payload</h4>
                   <div className="flex items-center gap-2">
                     {isTokenExpired(jwtDecoded.payload) && (
-                      <span className="text-xs text-red-500 font-medium">已过期</span>
+                      <span className="text-xs font-medium text-state-danger">已过期</span>
                     )}
                     <CopyButton text={JSON.stringify(jwtDecoded.payload, null, 2)} size="sm" />
                   </div>
                 </div>
-                <pre className="text-sm font-mono text-gray-600 overflow-x-auto">
+                <pre className="overflow-x-auto text-sm font-mono text-fg-secondary">
                   {JSON.stringify(jwtDecoded.payload, null, 2)}
                 </pre>
               </div>
 
-              <div className="p-4 bg-gray-50 rounded-md">
-                <h4 className="font-medium text-gray-700 mb-2">Signature</h4>
-                <p className="text-sm font-mono text-gray-500 break-all">
+              <div className="rounded-md border border-border bg-panel p-4">
+                <h4 className="mb-2 font-medium text-fg-secondary">Signature</h4>
+                <p className="break-all text-sm font-mono text-fg-muted">
                   {jwtDecoded.signature}
                 </p>
               </div>
@@ -222,9 +222,9 @@ export function NetworkTools() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="mb-1 block text-sm font-medium text-fg-secondary">
                 Headers (每行一个: Key: Value)
               </label>
               <TextArea
@@ -236,7 +236,7 @@ export function NetworkTools() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="mb-1 block text-sm font-medium text-fg-secondary">
                 Body (JSON)
               </label>
               <TextArea
@@ -250,14 +250,14 @@ export function NetworkTools() {
 
           {httpResponse && (
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium text-gray-700">响应</label>
+              <div className="mb-1 flex items-center justify-between">
+                <label className="block text-sm font-medium text-fg-secondary">响应</label>
                 <CopyButton text={httpResponse} size="sm" />
               </div>
               <TextArea
                 value={httpResponse}
                 readOnly
-                className="h-64 font-mono text-sm bg-gray-50"
+                className="h-64 bg-panel font-mono text-sm"
               />
             </div>
           )}

@@ -17,13 +17,13 @@ interface SettingsPanelProps {
 function getKindBadgeClass(kind: TranslationServiceKind) {
   switch (kind) {
     case 'free-default':
-      return 'bg-emerald-50 text-emerald-700';
+      return 'bg-state-success/15 text-state-success';
     case 'free-instance':
-      return 'bg-amber-50 text-amber-700';
+      return 'bg-state-warning/15 text-state-warning';
     case 'api-key':
-      return 'bg-gray-100 text-gray-700';
+      return 'bg-accent-soft text-fg-secondary';
     default:
-      return 'bg-gray-100 text-gray-700';
+      return 'bg-accent-soft text-fg-secondary';
   }
 }
 
@@ -49,53 +49,51 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
     || { enabled: false };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[80vh] flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">翻译服务设置</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/42 px-4 backdrop-blur-sm">
+      <div className="flex max-h-[80vh] w-full max-w-lg flex-col overflow-hidden rounded-[24px] border border-border bg-card text-fg shadow-panel">
+        <div className="flex items-center justify-between border-b border-border p-4">
+          <h2 className="text-lg font-semibold text-fg">翻译服务设置</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-fg-muted transition-colors hover:text-fg"
           >
             ✕
           </button>
         </div>
 
         <div className="flex flex-1 overflow-hidden">
-          {/* 左侧服务列表 */}
-          <div className="w-40 border-r bg-gray-50 p-2 overflow-y-auto">
+          <div className="w-40 overflow-y-auto border-r border-border bg-panel p-2">
             {TRANSLATION_SERVICES.map((s) => (
               <button
                 key={s.id}
                 onClick={() => setActiveTab(s.id)}
-                className={`w-full text-left px-3 py-2 rounded-md text-sm ${
+                className={`w-full rounded-md px-3 py-2 text-left text-sm ${
                   activeTab === s.id
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'hover:bg-gray-100'
+                    ? 'bg-accent-soft text-accent'
+                    : 'text-fg-secondary hover:bg-panel/80'
                 }`}
               >
                 <div className="font-medium">{s.name}</div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-fg-muted">
                   {TRANSLATION_SERVICE_KIND_LABELS[s.kind]}
                 </div>
               </button>
             ))}
           </div>
 
-          {/* 右侧配置 */}
-          <div className="flex-1 p-4 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto p-4">
             {service && (
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-gray-900">{service.name}</h3>
+                    <h3 className="font-medium text-fg">{service.name}</h3>
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${getKindBadgeClass(service.kind)}`}
                     >
                       {TRANSLATION_SERVICE_KIND_LABELS[service.kind]}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="mt-1 text-sm text-fg-secondary">
                     {service.description}
                   </p>
                 </div>
@@ -108,16 +106,16 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
                     onChange={(e) =>
                       updateServiceConfig(service.id, { enabled: e.target.checked })
                     }
-                    className="rounded border-gray-300"
+                    className="rounded border-border"
                   />
-                  <label htmlFor={`${service.id}-enabled`} className="text-sm">
+                  <label htmlFor={`${service.id}-enabled`} className="text-sm text-fg-secondary">
                     启用此服务
                   </label>
                 </div>
 
                 {service.kind === 'free-instance' && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="mb-1 block text-sm font-medium text-fg-secondary">
                       实例地址
                     </label>
                     <input
@@ -126,10 +124,10 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
                       onChange={(e) =>
                         updateServiceConfig(service.id, { instanceUrl: e.target.value })
                       }
-                      className="w-full px-3 py-2 border rounded-md text-sm"
+                      className="w-full rounded-md border border-border bg-input px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       placeholder={getInstancePlaceholder(service.id)}
                     />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="mt-1 text-xs text-fg-muted">
                       留空时使用内置实例，建议填你自己的可用实例地址。
                     </p>
                   </div>
@@ -138,7 +136,7 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
                 {service.requiresKey && (
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="mb-1 block text-sm font-medium text-fg-secondary">
                         API Key / App ID
                       </label>
                       <input
@@ -147,14 +145,14 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
                         onChange={(e) =>
                           updateServiceConfig(service.id, { apiKey: e.target.value })
                         }
-                        className="w-full px-3 py-2 border rounded-md text-sm"
+                        className="w-full rounded-md border border-border bg-input px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                         placeholder="输入 API Key"
                       />
                     </div>
 
                     {service.requiresSecret && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="mb-1 block text-sm font-medium text-fg-secondary">
                           Secret Key / 密钥
                         </label>
                         <input
@@ -163,7 +161,7 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
                           onChange={(e) =>
                             updateServiceConfig(service.id, { secretKey: e.target.value })
                           }
-                          className="w-full px-3 py-2 border rounded-md text-sm"
+                          className="w-full rounded-md border border-border bg-input px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                           placeholder="输入 Secret Key"
                         />
                       </div>
@@ -171,8 +169,8 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
                   </div>
                 )}
 
-                <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded">
-                  <p className="font-medium mb-1">支持的语言：</p>
+                <div className="rounded-xl bg-panel p-3 text-xs text-fg-secondary">
+                  <p className="mb-1 font-medium">支持的语言：</p>
                   <p>{service.languages.join(', ')}</p>
                 </div>
               </div>
@@ -180,7 +178,7 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 p-4 border-t bg-gray-50">
+        <div className="flex justify-end gap-2 border-t border-border bg-panel p-4">
           <Button variant="secondary" size="sm" onClick={onClose}>
             关闭
           </Button>

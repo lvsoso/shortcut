@@ -126,47 +126,44 @@ export function TimestampConverter() {
       description="Unix 时间戳与北京时间相互转换"
       layout="narrow"
     >
-      <div className="space-y-6">
-        {/* 当前时间显示 */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-100">
-          <div className="flex items-center gap-2 text-blue-700 mb-2">
-            <Clock className="w-5 h-5" />
+      <div className="space-y-6 text-fg">
+        <div className="rounded-2xl border border-border bg-card bg-accent-soft/40 p-4 shadow-panel">
+          <div className="mb-2 flex items-center gap-2 text-accent">
+            <Clock className="h-5 w-5" />
             <span className="font-medium">当前时间</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
-              <div className="text-xs text-gray-500 mb-1">时间戳（秒）</div>
-              <div className="font-mono text-lg">
+              <div className="mb-1 text-xs text-fg-muted">时间戳（秒）</div>
+              <div className="font-mono text-lg text-fg">
                 {Math.floor(currentTime.getTime() / 1000)}
               </div>
             </div>
             <div>
-              <div className="text-xs text-gray-500 mb-1">时间戳（毫秒）</div>
-              <div className="font-mono text-lg">
+              <div className="mb-1 text-xs text-fg-muted">时间戳（毫秒）</div>
+              <div className="font-mono text-lg text-fg">
                 {currentTime.getTime()}
               </div>
             </div>
             <div>
-              <div className="text-xs text-gray-500 mb-1">北京时间</div>
-              <div className="font-mono text-lg">
+              <div className="mb-1 text-xs text-fg-muted">北京时间</div>
+              <div className="font-mono text-lg text-fg">
                 {formatBeijingTime(currentTime)}
               </div>
             </div>
           </div>
         </div>
 
-        {/* 转换区域 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* 时间戳输入 */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+              <label className="flex items-center gap-2 text-sm font-medium text-fg-secondary">
+                <span className="h-2 w-2 rounded-full bg-accent"></span>
                 Unix 时间戳
               </label>
               <div className="flex gap-1">
                 <Button variant="secondary" size="sm" onClick={useCurrentTime}>
-                  <RefreshCw className="w-3 h-3 mr-1" />
+                  <RefreshCw className="mr-1 h-3 w-3" />
                   当前
                 </Button>
                 <CopyButton text={timestamp} disabled={!timestamp} />
@@ -179,18 +176,17 @@ export function TimestampConverter() {
                 convertTimestampToBeijing(e.target.value);
               }}
               placeholder="输入时间戳（秒或毫秒）..."
-              className="w-full h-32 px-3 py-2 border rounded-md shadow-sm font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="h-32 w-full resize-none rounded-md border border-border bg-input px-3 py-2 font-mono text-sm text-fg shadow-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
             />
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-fg-muted">
               支持 10 位（秒）或 13 位（毫秒）
             </div>
           </div>
 
-          {/* 北京时间输入 */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              <label className="flex items-center gap-2 text-sm font-medium text-fg-secondary">
+                <span className="h-2 w-2 rounded-full bg-state-success"></span>
                 北京时间
               </label>
               <CopyButton text={beijingTime} disabled={!beijingTime} />
@@ -202,25 +198,23 @@ export function TimestampConverter() {
                 convertBeijingToTimestamp(e.target.value);
               }}
               placeholder="输入北京时间..."
-              className="w-full h-32 px-3 py-2 border rounded-md shadow-sm font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="h-32 w-full resize-none rounded-md border border-border bg-input px-3 py-2 font-mono text-sm text-fg shadow-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
             />
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-fg-muted">
               格式: YYYY-MM-DD HH:mm:ss
             </div>
           </div>
         </div>
 
-        {/* 错误提示 */}
         {error && (
-          <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">
+          <div className="rounded-md border border-state-danger/25 bg-state-danger/10 p-3 text-sm text-state-danger">
             {error}
           </div>
         )}
 
-        {/* 常用转换参考 */}
-        <div className="border rounded-lg p-4 bg-gray-50">
-          <h3 className="text-sm font-medium text-gray-700 mb-3">常用时间参考</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+        <div className="rounded-2xl border border-border bg-panel p-4">
+          <h3 className="mb-3 text-sm font-medium text-fg-secondary">常用时间参考</h3>
+          <div className="grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
             {[
               { label: '1 分钟', seconds: 60 },
               { label: '1 小时', seconds: 3600 },
@@ -234,10 +228,10 @@ export function TimestampConverter() {
                   setTimestamp(ts);
                   convertTimestampToBeijing(ts);
                 }}
-                className="text-left p-2 bg-white rounded border hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                className="rounded-xl border border-border bg-card p-3 text-left transition-colors hover:border-accent hover:bg-accent-soft"
               >
-                <div className="text-gray-500 text-xs">{item.label}后</div>
-                <div className="font-mono text-blue-600">
+                <div className="text-xs text-fg-muted">{item.label}后</div>
+                <div className="font-mono text-accent">
                   +{item.seconds.toLocaleString()}
                 </div>
               </button>
@@ -245,7 +239,6 @@ export function TimestampConverter() {
           </div>
         </div>
 
-        {/* 清空按钮 */}
         <div className="flex justify-end">
           <Button variant="secondary" size="sm" onClick={clearAll}>
             清空

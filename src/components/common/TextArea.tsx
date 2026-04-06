@@ -10,22 +10,22 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="mb-1 block text-sm font-medium text-fg-secondary">
             {label}
           </label>
         )}
         <textarea
           ref={ref}
           className={`
-            w-full px-3 py-2 border rounded-md shadow-sm
-            focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500
-            ${error ? 'border-red-500' : 'border-gray-300'}
+            w-full rounded-md border bg-input px-3 py-2 text-fg shadow-sm
+            focus:outline-none focus:ring-2 focus:ring-accent/35 focus:border-accent
+            ${error ? 'border-state-danger' : 'border-border'}
             ${className}
           `}
           {...props}
         />
         {error && (
-          <p className="mt-1 text-sm text-red-600">{error}</p>
+          <p className="mt-1 text-sm text-state-danger">{error}</p>
         )}
       </div>
     );

@@ -1,5 +1,5 @@
 import { Suspense, useCallback, useEffect, useRef } from 'react';
-import { Keyboard, PanelLeftOpen } from 'lucide-react';
+import { Keyboard, Monitor, Moon, PanelLeftOpen, Sparkles, Sun } from 'lucide-react';
 import { Button } from './components/common/Button';
 import { Sidebar } from './components/layout/Sidebar';
 import { registry } from './core/registry';
@@ -9,6 +9,7 @@ import { dataConverter } from './modules/data-converter';
 import { networkTools } from './modules/network-tools';
 import { translator } from './modules/translator';
 import { timestampConverter } from './modules/timestamp-converter';
+import { useThemeStore } from './stores/themeStore';
 import { useToolStore } from './stores/toolStore';
 
 const shortcuts = [
@@ -53,6 +54,12 @@ function isTypingTarget(target: EventTarget | null) {
 function App() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const shouldFocusSearchRef = useRef(false);
+  const {
+    themeName,
+    themeMode,
+    setThemeName,
+    setThemeMode,
+  } = useThemeStore();
   const {
     currentToolId,
     setCurrentTool,
@@ -150,9 +157,10 @@ function App() {
   const currentTool = currentToolId ? registry.getTool(currentToolId) : null;
   const ToolComponent = currentTool?.component;
   const currentToolMeta = currentTool?.meta;
+  const isAnimeTheme = themeName === 'anime';
 
   return (
-    <div className="relative h-screen overflow-hidden p-3 sm:p-4">
+    <div className="relative h-screen overflow-hidden bg-app bg-app-gradient p-3 text-fg sm:p-4">
       <div className="relative flex h-full gap-3 lg:gap-4">
         {isSidebarOpen && (
           <Sidebar
@@ -165,10 +173,10 @@ function App() {
           {!isSidebarOpen && (
             <div className="app-shell-subtle-panel absolute left-5 top-5 z-20 flex items-center gap-3 rounded-2xl px-4 py-3">
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+                <p className="text-xs font-medium uppercase tracking-[0.18em] text-fg-muted">
                   菜单导航
                 </p>
-                <p className="mt-1 text-sm text-slate-600">展开工具列表并恢复搜索入口</p>
+                <p className="mt-1 text-sm text-fg-secondary">展开工具列表并恢复搜索入口</p>
               </div>
               <Button
                 variant="secondary"
@@ -178,7 +186,7 @@ function App() {
               >
                 <PanelLeftOpen className="h-4 w-4" />
                 <span>菜单</span>
-                <span className="rounded-lg bg-slate-100 px-2 py-1 text-[11px] text-slate-500">
+                <span className="rounded-lg bg-accent-soft px-2 py-1 text-[11px] text-fg-muted">
                   Cmd/Ctrl + \
                 </span>
               </Button>
@@ -188,28 +196,85 @@ function App() {
           <div className="app-shell-hairline border-b px-5 py-5 sm:px-6">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-fg-muted">
                   开发工具工作台
                 </p>
-                <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 sm:text-[2rem]">
-                  {currentToolMeta?.name ?? '选择工具开始'}
-                </h1>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                <div className="mt-2 flex flex-wrap items-center gap-3">
+                  <h1 className="text-2xl font-semibold tracking-tight text-fg sm:text-[2rem]">
+                    {currentToolMeta?.name ?? '选择工具开始'}
+                  </h1>
+                  {isAnimeTheme && (
+                    <span className="anime-chip inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium text-fg-secondary">
+                      <Sparkles className="h-3.5 w-3.5 text-accent" />
+                      樱糖科技感
+                    </span>
+                  )}
+                </div>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-fg-secondary">
                   {currentToolMeta?.description ?? '从左侧导航切换工具，快捷键面板会帮助你更快完成操作。'}
                 </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="hidden rounded-2xl border border-white/80 bg-white/[0.92] px-3 py-2 text-right md:block">
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
+              <div className="flex flex-wrap items-center justify-end gap-3">
+                <div className="hidden rounded-2xl border border-border bg-card px-3 py-2 text-right shadow-panel md:block">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-fg-muted">
                     壳层快捷键
                   </p>
-                  <p className="mt-1 text-sm text-slate-600">`/` 聚焦搜索，`?` 查看帮助</p>
+                  <p className="mt-1 text-sm text-fg-secondary">`/` 聚焦搜索，`?` 查看帮助</p>
+                </div>
+                <div className="flex items-center gap-2 rounded-2xl border border-border bg-card p-1 shadow-panel">
+                  <Button
+                    variant={themeName === 'default' ? 'secondary' : 'ghost'}
+                    size="sm"
+                    className="gap-2 rounded-xl"
+                    onClick={() => setThemeName('default')}
+                  >
+                    <Sun className="h-4 w-4" />
+                    默认
+                  </Button>
+                  <Button
+                    variant={themeName === 'anime' ? 'secondary' : 'ghost'}
+                    size="sm"
+                    className="gap-2 rounded-xl"
+                    onClick={() => setThemeName('anime')}
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    二次元
+                  </Button>
+                </div>
+                <div className="flex items-center gap-2 rounded-2xl border border-border bg-card p-1 shadow-panel">
+                  <Button
+                    variant={themeMode === 'light' ? 'secondary' : 'ghost'}
+                    size="sm"
+                    className="rounded-xl"
+                    onClick={() => setThemeMode('light')}
+                    title="浅色模式"
+                  >
+                    <Sun className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={themeMode === 'dark' ? 'secondary' : 'ghost'}
+                    size="sm"
+                    className="rounded-xl"
+                    onClick={() => setThemeMode('dark')}
+                    title="深色模式"
+                  >
+                    <Moon className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={themeMode === 'system' ? 'secondary' : 'ghost'}
+                    size="sm"
+                    className="rounded-xl"
+                    onClick={() => setThemeMode('system')}
+                    title="跟随系统"
+                  >
+                    <Monitor className="h-4 w-4" />
+                  </Button>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="gap-2 rounded-xl bg-white/[0.65]"
+                  className="gap-2 rounded-xl bg-card/70"
                   onClick={() => setShortcutHelpOpen(true)}
                 >
                   <Keyboard className="h-4 w-4" />
@@ -223,7 +288,7 @@ function App() {
             {ToolComponent ? (
               <Suspense
                 fallback={(
-                  <div className="app-shell-subtle-panel flex h-full items-center justify-center rounded-[26px] px-6 text-center text-slate-500">
+                  <div className="app-shell-subtle-panel flex h-full items-center justify-center rounded-[26px] px-6 text-center text-fg-muted">
                     正在加载工具...
                   </div>
                 )}
@@ -231,7 +296,7 @@ function App() {
                 <ToolComponent />
               </Suspense>
             ) : (
-              <div className="app-shell-subtle-panel flex h-full items-center justify-center rounded-[26px] px-6 text-center text-slate-500">
+              <div className="app-shell-subtle-panel flex h-full items-center justify-center rounded-[26px] px-6 text-center text-fg-muted">
                 请从左侧选择一个工具
               </div>
             )}
@@ -241,20 +306,20 @@ function App() {
 
       {isShortcutHelpOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/38 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/46 px-4 backdrop-blur-sm"
           onClick={() => setShortcutHelpOpen(false)}
         >
           <div
-            className="w-full max-w-lg rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_40px_-24px_rgba(15,23,42,0.22)] sm:p-7"
+            className="w-full max-w-lg rounded-[28px] border border-border bg-card p-6 text-fg shadow-panel sm:p-7"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-fg-muted">
                   Command Palette
                 </p>
-                <h2 className="mt-2 text-xl font-semibold text-slate-950">快捷键帮助</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-500">
+                <h2 className="mt-2 text-xl font-semibold text-fg">快捷键帮助</h2>
+                <p className="mt-2 text-sm leading-6 text-fg-secondary">
                   这组快捷键只覆盖壳层导航，不会替代各个工具自己的输入与编辑行为。
                 </p>
               </div>
@@ -272,14 +337,14 @@ function App() {
               {shortcuts.map((shortcut) => (
                 <div
                   key={shortcut.keys}
-                  className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4"
+                  className="rounded-2xl border border-border bg-panel px-4 py-4"
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div>
-                      <p className="text-sm font-medium text-slate-800">{shortcut.description}</p>
-                      <p className="mt-1 text-xs text-slate-500">应用壳层全局可用</p>
+                      <p className="text-sm font-medium text-fg">{shortcut.description}</p>
+                      <p className="mt-1 text-xs text-fg-muted">应用壳层全局可用</p>
                     </div>
-                    <kbd className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-600">
+                    <kbd className="rounded-xl border border-border bg-card px-3 py-2 text-xs font-medium text-fg-secondary">
                       {shortcut.keys}
                     </kbd>
                   </div>
@@ -287,8 +352,8 @@ function App() {
               ))}
             </div>
 
-            <div className="mt-5 rounded-2xl border border-dashed border-slate-300 bg-slate-100 px-4 py-3 text-xs leading-5 text-slate-500">
-              按 <span className="font-medium text-slate-700">Esc</span> 也可以关闭当前面板。
+            <div className="mt-5 rounded-2xl border border-dashed border-border bg-panel px-4 py-3 text-xs leading-5 text-fg-muted">
+              按 <span className="font-medium text-fg-secondary">Esc</span> 也可以关闭当前面板。
             </div>
           </div>
         </div>

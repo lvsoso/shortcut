@@ -197,7 +197,7 @@ export function DataConverter() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="mb-1 block text-sm font-medium text-fg-secondary">
               输入
             </label>
             <TextArea
@@ -209,14 +209,14 @@ export function DataConverter() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="mb-1 block text-sm font-medium text-fg-secondary">
               输出结果
             </label>
             <TextArea
               value={output}
               readOnly
               placeholder="转换结果..."
-              className="h-64 font-mono text-sm bg-gray-50"
+              className="h-64 bg-panel font-mono text-sm"
               error={error || undefined}
             />
           </div>

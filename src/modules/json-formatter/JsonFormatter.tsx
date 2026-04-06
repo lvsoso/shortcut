@@ -157,14 +157,14 @@ export function JsonFormatter() {
             反转义
           </Button>
           {output && <CopyButton text={output} />}
-          <label className="flex items-center gap-2 ml-4 text-sm text-gray-600 cursor-pointer">
+          <label className="ml-4 flex cursor-pointer items-center gap-2 text-sm text-fg-secondary">
             <input
               type="checkbox"
               checked={useSingleQuote}
               onChange={(e) => setUseSingleQuote(e.target.checked)}
-              className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+              className="rounded border-border text-accent focus:ring-accent"
             />
-            <Quote className="w-4 h-4" />
+            <Quote className="h-4 w-4" />
             Python 风格（单引号）
           </label>
         </div>

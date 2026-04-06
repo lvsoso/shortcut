@@ -13,6 +13,7 @@ import {
 import { ToolContainer } from '../../components/layout/ToolContainer';
 import { TextArea } from '../../components/common/TextArea';
 import { Button } from '../../components/common/Button';
+import { getResolvedThemeMode, useThemeStore } from '../../stores/themeStore';
 
 const defaultDiagram = `graph TD
     A[开始] --> B{判断}
@@ -73,11 +74,11 @@ function MermaidEditorContent({
   showCloseButton = true,
 }: MermaidEditorContentProps) {
   return (
-    <div className="flex h-full flex-col bg-white">
-      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+    <div className="flex h-full flex-col bg-card text-fg">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <div>
-          <p className="text-sm font-medium text-slate-900">Mermaid 代码</p>
-          <p className="mt-1 text-xs text-slate-500">修改源码后右侧会实时更新预览</p>
+          <p className="text-sm font-medium text-fg">Mermaid 代码</p>
+          <p className="mt-1 text-xs text-fg-muted">修改源码后右侧会实时更新预览</p>
         </div>
         {showCloseButton && (
           <Button variant="ghost" size="sm" onClick={onClose}>
@@ -92,14 +93,14 @@ function MermaidEditorContent({
             value={code}
             onChange={(e) => onChange(e.target.value)}
             placeholder="输入 Mermaid 图表语法..."
-            className="h-full min-h-[18rem] resize-none border-slate-200 font-mono text-sm"
+            className="h-full min-h-[18rem] resize-none font-mono text-sm"
           />
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">示例模板</p>
-            <span className="text-xs text-slate-400">点击直接替换当前代码</span>
+            <p className="text-xs font-medium uppercase tracking-wide text-fg-muted">示例模板</p>
+            <span className="text-xs text-fg-muted">点击直接替换当前代码</span>
           </div>
           <div className="grid gap-2">
             {examples.map((example) => (
@@ -128,6 +129,9 @@ export function MermaidViewer() {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editorWidth, setEditorWidth] = useState(DEFAULT_EDITOR_WIDTH);
   const [isResizing, setIsResizing] = useState(false);
+  const themeName = useThemeStore((state) => state.themeName);
+  const themeMode = useThemeStore((state) => state.themeMode);
+  const resolvedMode = getResolvedThemeMode(themeMode);
 
   const [scale, setScale] = useState(1);
   const [translateX, setTranslateX] = useState(0);
@@ -138,12 +142,29 @@ export function MermaidViewer() {
   const splitContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const isDark = resolvedMode === 'dark';
+    const isAnime = themeName === 'anime';
+
     mermaid.initialize({
       startOnLoad: false,
-      theme: 'default',
+      theme: isDark ? 'dark' : 'default',
       securityLevel: 'strict',
+      themeVariables: isAnime ? {
+        primaryColor: isDark ? '#ff78b2' : '#ffc2dd',
+        primaryTextColor: isDark ? '#f9ecff' : '#382f4d',
+        primaryBorderColor: isDark ? '#a78bfa' : '#ff78b2',
+        lineColor: isDark ? '#d8c7f6' : '#665c82',
+        secondaryColor: isDark ? '#291840' : '#f8f3ff',
+        tertiaryColor: isDark ? '#1d1230' : '#fff7fb',
+        background: 'transparent',
+        mainBkg: isDark ? '#291840' : '#fff7fb',
+        nodeBorder: isDark ? '#a78bfa' : '#ff78b2',
+        clusterBkg: isDark ? '#231638' : '#f8f3ff',
+        clusterBorder: isDark ? '#7dd3fc' : '#c4b5fd',
+        edgeLabelBackground: isDark ? '#231638' : '#fff7fb',
+      } : undefined,
     });
-  }, []);
+  }, [resolvedMode, themeName]);
 
   useEffect(() => {
     if (!isEditorOpen) return;
@@ -319,8 +340,8 @@ export function MermaidViewer() {
       title="Mermaid 查看器"
       description="实时预览 Mermaid 图表"
     >
-      <div className="flex h-full min-h-0 flex-col gap-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+      <div className="flex h-full min-h-0 flex-col gap-4 text-fg">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-panel">
           <div className="flex flex-wrap items-center gap-2">
             <Button
               variant={isEditorOpen ? 'primary' : 'secondary'}
@@ -344,7 +365,7 @@ export function MermaidViewer() {
             <Button variant="secondary" size="sm" onClick={zoomOut} title="缩小">
               <ZoomOut className="h-4 w-4" />
             </Button>
-            <span className="w-12 text-center text-xs text-slate-500">
+            <span className="w-12 text-center text-xs text-fg-muted">
               {Math.round(scale * 100)}%
             </span>
             <Button variant="secondary" size="sm" onClick={zoomIn} title="放大">
@@ -365,14 +386,14 @@ export function MermaidViewer() {
         </div>
 
         {error && (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <div className="rounded-2xl border border-state-warning/30 bg-state-warning/10 px-4 py-3 text-sm text-fg">
             <div className="flex items-start gap-2">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-state-warning" />
               <div className="space-y-1">
                 <p className="font-medium">渲染失败</p>
-                <p className="break-all text-amber-800">{error}</p>
+                <p className="break-all text-fg-secondary">{error}</p>
                 {hasCachedDiagram && (
-                  <p className="text-xs text-amber-700">当前继续显示最近一次成功渲染结果。</p>
+                  <p className="text-xs text-fg-muted">当前继续显示最近一次成功渲染结果。</p>
                 )}
               </div>
             </div>
@@ -381,12 +402,12 @@ export function MermaidViewer() {
 
         <div
           ref={splitContainerRef}
-          className="relative flex min-h-[32rem] flex-1 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm"
+          className="relative flex min-h-[32rem] flex-1 overflow-hidden rounded-[28px] border border-border bg-card shadow-panel"
         >
           <div
-            className={`hidden h-full shrink-0 overflow-hidden bg-white transition-[width,border-color] ease-out lg:flex ${
+            className={`hidden h-full shrink-0 overflow-hidden bg-card transition-[width,border-color] ease-out lg:flex ${
               isResizing ? 'duration-0' : 'duration-300'
-            } ${isEditorOpen ? 'border-r border-slate-200' : 'border-r-0'
+            } ${isEditorOpen ? 'border-r border-border' : 'border-r-0'
             }`}
             style={{ width: isEditorOpen ? `${editorWidth}px` : '0px' }}
           >
@@ -414,18 +435,18 @@ export function MermaidViewer() {
           >
             <div
               className={`flex w-full cursor-col-resize items-center justify-center ${
-                isResizing ? 'bg-slate-100/90' : 'hover:bg-slate-100/80'
+                isResizing ? 'bg-accent-soft/90' : 'hover:bg-accent-soft/80'
               }`}
             >
               <div
                 className={`h-16 w-px rounded-full transition-colors ${
-                  isResizing ? 'bg-slate-500' : 'bg-slate-300'
+                  isResizing ? 'bg-accent' : 'bg-border-strong'
                 }`}
               />
             </div>
           </div>
 
-          <div className="relative min-w-0 flex-1 bg-slate-50/70">
+          <div className="relative min-w-0 flex-1 bg-panel">
             <div
               className={`
                 absolute inset-0 overflow-hidden
@@ -438,8 +459,8 @@ export function MermaidViewer() {
               {isEmpty ? (
                 <div className="flex h-full items-center justify-center px-6">
                   <div className="max-w-sm space-y-3 text-center">
-                    <p className="text-lg font-medium text-slate-900">先写点 Mermaid 代码</p>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-lg font-medium text-fg">先写点 Mermaid 代码</p>
+                    <p className="text-sm text-fg-secondary">
                       打开编辑器，粘贴语法或直接套用示例模板。
                     </p>
                     <div className="flex justify-center">
@@ -453,8 +474,8 @@ export function MermaidViewer() {
               ) : showCanvasError ? (
                 <div className="flex h-full items-center justify-center px-6">
                   <div className="max-w-md space-y-3 text-center">
-                    <p className="text-lg font-medium text-red-600">图表暂时无法渲染</p>
-                    <p className="break-all text-sm text-slate-500">{error}</p>
+                    <p className="text-lg font-medium text-state-danger">图表暂时无法渲染</p>
+                    <p className="break-all text-sm text-fg-secondary">{error}</p>
                     <div className="flex justify-center">
                       <Button variant="secondary" onClick={() => setIsEditorOpen(true)}>
                         <Code2 className="mr-1 h-4 w-4" />
@@ -476,12 +497,12 @@ export function MermaidViewer() {
                   </div>
                 </div>
               ) : (
-                <div className="flex h-full items-center justify-center text-sm text-slate-400">
+                <div className="flex h-full items-center justify-center text-sm text-fg-muted">
                   图表将在此显示
                 </div>
               )}
 
-              <div className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-white/80 px-3 py-1 text-xs text-slate-500 shadow-sm">
+              <div className="pointer-events-none absolute bottom-3 left-3 rounded-full border border-border bg-card/80 px-3 py-1 text-xs text-fg-muted shadow-panel backdrop-blur-sm">
                 Ctrl/Cmd + 滚轮缩放
                 {isPanMode && ' | 拖拽平移'}
               </div>
@@ -492,10 +513,10 @@ export function MermaidViewer() {
         {isEditorOpen && (
           <div className="lg:hidden">
             <div
-              className="fixed inset-0 z-40 bg-slate-900/35 backdrop-blur-sm"
+              className="fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-sm"
               onClick={() => setIsEditorOpen(false)}
             />
-            <div className="fixed inset-y-0 left-0 z-50 w-full max-w-none bg-white shadow-2xl sm:w-[420px]">
+            <div className="fixed inset-y-0 left-0 z-50 w-full max-w-none bg-card shadow-2xl sm:w-[420px]">
               <MermaidEditorContent
                 code={code}
                 onChange={setCode}

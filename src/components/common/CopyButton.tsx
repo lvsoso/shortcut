@@ -17,7 +17,7 @@ export function CopyButton({ text, size = 'sm', disabled = false }: CopyButtonPr
       size={size}
       onClick={() => copy(text)}
       disabled={disabled}
-      className="gap-1"
+      className="gap-1 rounded-xl"
     >
       {copied ? (
         <>
