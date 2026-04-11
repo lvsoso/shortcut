@@ -1,5 +1,5 @@
 import { RefObject, useState } from 'react';
-import { Search, FileJson, GitGraph, ArrowLeftRight, Globe, ChevronDown, Languages, Clock } from 'lucide-react';
+import { Search, FileJson, GitGraph, ArrowLeftRight, Globe, ChevronDown, Languages, Clock, BrainCircuit } from 'lucide-react';
 import { useToolStore } from '../../stores/toolStore';
 import { registry } from '../../core/registry';
 import { ToolCategory } from '../../types';
@@ -11,6 +11,7 @@ const categoryIcons: Record<ToolCategory, typeof FileJson> = {
   network: Globe,
   translator: Languages,
   time: Clock,
+  ai: BrainCircuit,
 };
 
 const categoryNames: Record<ToolCategory, string> = {
@@ -20,20 +21,19 @@ const categoryNames: Record<ToolCategory, string> = {
   network: '网络工具',
   translator: '翻译工具',
   time: '时间工具',
+  ai: 'AI & LLM',
 };
 
 interface SidebarProps {
   searchInputRef: RefObject<HTMLInputElement>;
-  onOpenShortcutHelp: () => void;
 }
 
 export function Sidebar({
   searchInputRef,
-  onOpenShortcutHelp,
 }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedCategories, setExpandedCategories] = useState<Set<ToolCategory>>(
-    new Set(['formatter', 'viewer', 'converter', 'network', 'translator', 'time'])
+    new Set(['formatter', 'viewer', 'converter', 'network', 'translator', 'time', 'ai'])
   );
   const { currentToolId, setCurrentTool } = useToolStore();
 
@@ -110,7 +110,13 @@ export function Sidebar({
                     <button
                       type="button"
                       key={tool.meta.id}
-                      onClick={() => setCurrentTool(tool.meta.id)}
+                      onClick={() => {
+                        if (tool.meta.id === 'llm-trace') {
+                          window.open('https://ui.perfetto.dev', '_blank');
+                          return;
+                        }
+                        setCurrentTool(tool.meta.id);
+                      }}
                       className={`w-full rounded-2xl border px-3 py-2.5 text-left text-sm transition-all ${
                         currentToolId === tool.meta.id
                           ? 'border-transparent bg-accent-gradient text-fg-onAccent shadow-panel'

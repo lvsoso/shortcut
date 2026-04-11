@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 type ToolContainerLayout = 'full' | 'narrow';
 
 interface ToolContainerProps {
-  title: string;
+  title?: string;
   description?: string;
   children: ReactNode;
   layout?: ToolContainerLayout;

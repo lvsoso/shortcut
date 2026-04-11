@@ -1,6 +1,6 @@
 import { ComponentType, LazyExoticComponent } from 'react';
 
-export type ToolCategory = 'formatter' | 'viewer' | 'converter' | 'network' | 'translator' | 'time';
+export type ToolCategory = 'formatter' | 'viewer' | 'converter' | 'network' | 'translator' | 'time' | 'ai';
 
 export interface ToolMeta {
   id: string;

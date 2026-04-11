@@ -9,6 +9,7 @@ import { dataConverter } from './modules/data-converter';
 import { networkTools } from './modules/network-tools';
 import { translator } from './modules/translator';
 import { timestampConverter } from './modules/timestamp-converter';
+import { llmTrace } from './modules/llm-trace';
 import { useThemeStore } from './stores/themeStore';
 import { useToolStore } from './stores/toolStore';
 
@@ -34,6 +35,7 @@ function registerTools() {
   registry.register(networkTools);
   registry.register(translator);
   registry.register(timestampConverter);
+  registry.register(llmTrace);
 }
 
 registerTools();
@@ -174,7 +176,6 @@ function App() {
         {isSidebarOpen && (
           <Sidebar
             searchInputRef={searchInputRef}
-            onOpenShortcutHelp={() => setShortcutHelpOpen(true)}
           />
         )}
 
