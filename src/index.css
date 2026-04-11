@@ -4,55 +4,55 @@
 
 @layer base {
   :root {
-    --color-bg-app: #edf2f7;
-    --color-bg-panel: rgba(255, 255, 255, 0.94);
-    --color-bg-card: rgba(255, 255, 255, 0.96);
-    --color-bg-sidebar: #0f172a;
-    --color-bg-input: rgba(255, 255, 255, 0.92);
-    --color-text-primary: #0f172a;
-    --color-text-secondary: #475569;
-    --color-text-muted: #64748b;
+    --color-bg-app: #efe4d3;
+    --color-bg-panel: rgba(252, 247, 239, 0.94);
+    --color-bg-card: rgba(255, 251, 245, 0.96);
+    --color-bg-sidebar: #433126;
+    --color-bg-input: rgba(252, 247, 239, 0.92);
+    --color-text-primary: #2f2118;
+    --color-text-secondary: #5f4a3a;
+    --color-text-muted: #8c7563;
     --color-text-on-accent: #ffffff;
-    --color-border-default: rgba(226, 232, 240, 0.78);
-    --color-border-strong: rgba(255, 255, 255, 0.7);
-    --color-accent: #6366f1;
-    --color-accent-hover: #4338ca;
-    --color-accent-soft: rgba(99, 102, 241, 0.14);
-    --color-success: #10b981;
-    --color-warning: #f59e0b;
-    --color-danger: #ef4444;
-    --color-info: #38bdf8;
-    --shadow-card: 0 4px 12px -10px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.82);
-    --shadow-focus: 0 0 0 4px rgba(99, 102, 241, 0.18);
-    --gradient-app: radial-gradient(circle at top left, rgba(99, 102, 241, 0.16), transparent 28%), radial-gradient(circle at top right, rgba(56, 189, 248, 0.14), transparent 24%), linear-gradient(180deg, #f8fbff 0%, #eef3f9 46%, #edf2f7 100%);
-    --gradient-accent: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    --color-border-default: rgba(124, 95, 68, 0.18);
+    --color-border-strong: rgba(117, 90, 64, 0.28);
+    --color-accent: #9b6438;
+    --color-accent-hover: #7e502d;
+    --color-accent-soft: rgba(155, 100, 56, 0.14);
+    --color-success: #5b8f5d;
+    --color-warning: #c78a35;
+    --color-danger: #c16452;
+    --color-info: #6f8f9f;
+    --shadow-card: 0 18px 42px -30px rgba(72, 48, 28, 0.22), 0 2px 6px rgba(90, 63, 40, 0.06);
+    --shadow-focus: 0 0 0 4px rgba(155, 100, 56, 0.16);
+    --gradient-app: radial-gradient(circle at top left, rgba(183, 149, 109, 0.12), transparent 30%), radial-gradient(circle at top right, rgba(139, 111, 83, 0.08), transparent 24%), linear-gradient(180deg, #f6efe4 0%, #efe5d7 52%, #e7dac8 100%);
+    --gradient-accent: linear-gradient(135deg, #b07847 0%, #8f5a31 100%);
     color: var(--color-text-primary);
     background: var(--gradient-app);
   }
 
   html[data-theme='default'][data-mode='dark'] {
-    --color-bg-app: #020617;
-    --color-bg-panel: rgba(15, 23, 42, 0.88);
-    --color-bg-card: rgba(15, 23, 42, 0.92);
-    --color-bg-sidebar: rgba(2, 6, 23, 0.96);
-    --color-bg-input: rgba(15, 23, 42, 0.72);
-    --color-text-primary: #e2e8f0;
-    --color-text-secondary: #cbd5e1;
-    --color-text-muted: #94a3b8;
+    --color-bg-app: #1c140f;
+    --color-bg-panel: rgba(41, 30, 23, 0.9);
+    --color-bg-card: rgba(49, 36, 27, 0.94);
+    --color-bg-sidebar: rgba(28, 20, 15, 0.98);
+    --color-bg-input: rgba(55, 40, 30, 0.9);
+    --color-text-primary: #f1e5d4;
+    --color-text-secondary: #d5c1aa;
+    --color-text-muted: #b49b84;
     --color-text-on-accent: #ffffff;
-    --color-border-default: rgba(148, 163, 184, 0.24);
-    --color-border-strong: rgba(148, 163, 184, 0.28);
-    --color-accent: #818cf8;
-    --color-accent-hover: #6366f1;
-    --color-accent-soft: rgba(129, 140, 248, 0.22);
-    --color-success: #34d399;
-    --color-warning: #fbbf24;
-    --color-danger: #f87171;
-    --color-info: #38bdf8;
-    --shadow-card: 0 18px 40px -28px rgba(2, 6, 23, 0.72), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    --shadow-focus: 0 0 0 4px rgba(129, 140, 248, 0.22);
-    --gradient-app: radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 30%), radial-gradient(circle at top right, rgba(56, 189, 248, 0.12), transparent 24%), linear-gradient(180deg, #020617 0%, #0f172a 56%, #111827 100%);
-    --gradient-accent: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+    --color-border-default: rgba(214, 189, 159, 0.16);
+    --color-border-strong: rgba(229, 209, 184, 0.24);
+    --color-accent: #c48a57;
+    --color-accent-hover: #d59a66;
+    --color-accent-soft: rgba(196, 138, 87, 0.18);
+    --color-success: #89bc86;
+    --color-warning: #d6a24e;
+    --color-danger: #d2816b;
+    --color-info: #90aab6;
+    --shadow-card: 0 26px 60px -36px rgba(0, 0, 0, 0.56), 0 6px 18px rgba(0, 0, 0, 0.18);
+    --shadow-focus: 0 0 0 4px rgba(196, 138, 87, 0.22);
+    --gradient-app: radial-gradient(circle at top left, rgba(164, 116, 74, 0.2), transparent 30%), radial-gradient(circle at top right, rgba(107, 81, 58, 0.16), transparent 24%), linear-gradient(180deg, #231913 0%, #1b1410 54%, #16100d 100%);
+    --gradient-accent: linear-gradient(135deg, #d39a68 0%, #a96d3c 100%);
   }
 
   html[data-theme='anime'][data-mode='light'] {
@@ -126,7 +126,7 @@
     border-color: var(--color-border-strong);
     background: var(--color-bg-panel);
     box-shadow: var(--shadow-card);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(10px) saturate(104%);
     position: relative;
     overflow: hidden;
   }
@@ -136,22 +136,23 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 12%, transparent) 0%, transparent 36%, color-mix(in srgb, var(--color-info) 10%, transparent) 100%);
-    opacity: 0.9;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, transparent 18%, transparent 100%);
+    opacity: 1;
   }
 
   .app-shell-subtle-panel {
     @apply border;
     border-color: var(--color-border-strong);
-    background: color-mix(in srgb, var(--color-bg-card) 88%, transparent);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
-    backdrop-filter: blur(16px);
+    background: color-mix(in srgb, var(--color-bg-card) 94%, rgba(255, 255, 255, 0.04));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(8px);
   }
 
   .app-shell-hairline {
     @apply border;
     border-color: var(--color-border-default);
   }
+
   .anime-chip {
     border: 1px solid color-mix(in srgb, var(--color-accent) 18%, transparent);
     background: linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 16%, transparent) 0%, color-mix(in srgb, var(--color-info) 12%, transparent) 100%);

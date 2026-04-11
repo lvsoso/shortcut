@@ -58,29 +58,7 @@ export function Sidebar({
   };
 
   return (
-    <aside className="flex h-full w-72 flex-col overflow-hidden rounded-[30px] border border-border bg-sidebar text-fg shadow-panel backdrop-blur-xl">
-      <div className="border-b border-border p-5">
-        <div className="rounded-[22px] border border-border bg-card/10 p-4 backdrop-blur-md">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-fg-muted">
-            DevTools
-          </p>
-          <h1 className="mt-2 text-xl font-semibold text-fg-onAccent">开发工作台</h1>
-          <p className="mt-2 text-sm leading-6 text-fg-secondary">
-            常用调试、转换和查看工具集中在同一套导航里，切换更快。
-          </p>
-          <button
-            type="button"
-            onClick={onOpenShortcutHelp}
-            className="mt-4 inline-flex items-center gap-2 rounded-xl border border-border bg-card/10 px-3 py-2 text-xs font-medium text-fg-secondary transition-colors hover:border-border-strong hover:bg-card/20 hover:text-fg-onAccent"
-          >
-            <span className="rounded-md border border-border bg-panel/40 px-1.5 py-0.5 text-[11px] text-fg-secondary">
-              ?
-            </span>
-            查看快捷键
-          </button>
-        </div>
-      </div>
-
+    <aside className="flex h-full w-72 flex-col overflow-hidden rounded-[30px] border border-border bg-sidebar text-fg shadow-panel backdrop-blur-md">
       <div className="px-4 py-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fg-muted" />
@@ -111,12 +89,12 @@ export function Sidebar({
                 onClick={() => toggleCategory(category)}
                 className={`flex w-full items-center justify-between rounded-2xl border px-3 py-3 text-sm font-medium transition-colors ${
                   isExpanded
-                    ? 'border-border-strong bg-card/15 text-fg-onAccent'
-                    : 'border-transparent bg-transparent text-fg-secondary hover:border-border hover:bg-card/10 hover:text-fg-onAccent'
+                    ? 'border-border-strong bg-[rgba(255,248,239,0.14)] text-fg-onAccent'
+                    : 'border-transparent bg-transparent text-fg-secondary hover:border-border hover:bg-[rgba(255,248,239,0.08)] hover:text-fg-onAccent'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <div className={`rounded-xl p-2 ${isExpanded ? 'bg-accent-soft text-accent' : 'bg-card/10 text-fg-secondary'}`}>
+                  <div className={`rounded-xl p-2 ${isExpanded ? 'bg-accent-soft text-accent' : 'bg-[rgba(255,248,239,0.08)] text-fg-secondary'}`}>
                     <Icon className="h-4 w-4" />
                   </div>
                   <span>{categoryNames[category]}</span>
@@ -136,7 +114,7 @@ export function Sidebar({
                       className={`w-full rounded-2xl border px-3 py-2.5 text-left text-sm transition-all ${
                         currentToolId === tool.meta.id
                           ? 'border-transparent bg-accent-gradient text-fg-onAccent shadow-panel'
-                          : 'border-transparent text-fg-secondary hover:border-border hover:bg-card/12 hover:text-fg-onAccent'
+                          : 'border-transparent text-fg-secondary hover:border-border hover:bg-[rgba(255,248,239,0.08)] hover:text-fg-onAccent'
                       }`}
                     >
                       <p className="font-medium">{tool.meta.name}</p>

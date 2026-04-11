@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useEffect, useRef } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { Keyboard, Monitor, Moon, PanelLeftOpen, Sparkles, Sun } from 'lucide-react';
 import { Button } from './components/common/Button';
 import { Sidebar } from './components/layout/Sidebar';
@@ -71,11 +71,20 @@ function App() {
     toggleShortcutHelp,
   } = useToolStore();
 
+  const [currentTime, setCurrentTime] = useState(() => new Date());
+
   useEffect(() => {
     if (!currentToolId) {
       setCurrentTool('json-formatter');
     }
   }, [currentToolId, setCurrentTool]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const focusSearchInput = useCallback(() => {
     requestAnimationFrame(() => {
@@ -171,17 +180,17 @@ function App() {
 
         <main className="app-shell-panel relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-[30px]">
           {!isSidebarOpen && (
-            <div className="app-shell-subtle-panel absolute left-5 top-5 z-20 flex items-center gap-3 rounded-2xl px-4 py-3">
+            <div className="app-shell-subtle-panel absolute left-3 top-3 z-20 flex items-center gap-2.5 rounded-2xl px-3 py-2">
               <div>
                 <p className="text-xs font-medium uppercase tracking-[0.18em] text-fg-muted">
                   菜单导航
                 </p>
-                <p className="mt-1 text-sm text-fg-secondary">展开工具列表并恢复搜索入口</p>
+                <p className="text-sm text-fg-secondary">展开工具列表并恢复搜索入口</p>
               </div>
               <Button
                 variant="secondary"
                 size="sm"
-                className="gap-2 rounded-xl"
+                className="gap-2 rounded-xl px-3"
                 onClick={() => setSidebarOpen(true)}
               >
                 <PanelLeftOpen className="h-4 w-4" />
@@ -193,34 +202,66 @@ function App() {
             </div>
           )}
 
-          <div className="app-shell-hairline border-b px-5 py-5 sm:px-6">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="app-shell-hairline border-b px-4 py-3 sm:px-5">
+            <div className="flex flex-col gap-2.5 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0">
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-fg-muted">
                   开发工具工作台
                 </p>
-                <div className="mt-2 flex flex-wrap items-center gap-3">
-                  <h1 className="text-2xl font-semibold tracking-tight text-fg sm:text-[2rem]">
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <h1 className="text-2xl font-semibold tracking-tight text-fg sm:text-[1.7rem]">
                     {currentToolMeta?.name ?? '选择工具开始'}
                   </h1>
                   {isAnimeTheme && (
-                    <span className="anime-chip inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium text-fg-secondary">
-                      <Sparkles className="h-3.5 w-3.5 text-accent" />
+                    <span className="anime-chip inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium text-fg-secondary">
+                      <Sparkles className="h-3 w-3 text-accent" />
                       樱糖科技感
                     </span>
                   )}
                 </div>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-fg-secondary">
+                <p className="mt-1 max-w-2xl text-sm leading-5 text-fg-secondary">
                   {currentToolMeta?.description ?? '从左侧导航切换工具，快捷键面板会帮助你更快完成操作。'}
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center justify-end gap-3">
-                <div className="hidden rounded-2xl border border-border bg-card px-3 py-2 text-right shadow-panel md:block">
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                <div className="hidden rounded-2xl border border-border bg-card px-3 py-1 text-right shadow-panel md:block">
                   <p className="text-xs font-medium uppercase tracking-[0.18em] text-fg-muted">
                     壳层快捷键
                   </p>
-                  <p className="mt-1 text-sm text-fg-secondary">`/` 聚焦搜索，`?` 查看帮助</p>
+                  <p className="text-sm text-fg-secondary">`/` 聚焦搜索，`?` 查看帮助</p>
+                </div>
+                <div className="hidden rounded-2xl border border-border bg-card px-3 py-1 text-right shadow-panel md:block">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-fg-muted">
+                    北京时间
+                  </p>
+                  <p className="text-sm text-fg-secondary">
+                    {new Intl.DateTimeFormat('zh-CN', {
+                      timeZone: 'Asia/Shanghai',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                      hour12: false,
+                    }).format(currentTime)}
+                  </p>
+                </div>
+                <div className="hidden rounded-2xl border border-border bg-card px-3 py-1 text-right shadow-panel md:block">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-fg-muted">
+                    美国东部
+                  </p>
+                  <p className="text-sm text-fg-secondary">
+                    {new Intl.DateTimeFormat('en-US', {
+                      timeZone: 'America/New_York',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                      hour12: false,
+                    }).format(currentTime)}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2 rounded-2xl border border-border bg-card p-1 shadow-panel">
                   <Button

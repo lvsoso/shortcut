@@ -19,7 +19,7 @@ export function ToolContainer({
 
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-[26px] border border-border bg-card shadow-panel">
-      <div className="min-h-0 flex-1 overflow-auto p-4 sm:p-5">
+      <div className="min-h-0 flex-1 overflow-auto p-3 sm:p-4">
         <div className={contentClassName}>
           {children}
         </div>

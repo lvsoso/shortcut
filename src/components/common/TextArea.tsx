@@ -17,8 +17,8 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         <textarea
           ref={ref}
           className={`
-            w-full rounded-md border bg-input px-3 py-2 text-fg shadow-sm
-            focus:outline-none focus:ring-2 focus:ring-accent/35 focus:border-accent
+            w-full rounded-xl border bg-input px-3 py-2.5 text-fg shadow-sm
+            focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent
             ${error ? 'border-state-danger' : 'border-border'}
             ${className}
           `}
